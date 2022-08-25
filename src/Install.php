@@ -38,7 +38,7 @@ class Install
     {
         // 创建框架文件
         $source_path = __DIR__ . DIRECTORY_SEPARATOR;
-        $desc_path = root_path() . DIRECTORY_SEPARATOR;
+        $desc_path = \root_path() . DIRECTORY_SEPARATOR;
         foreach (static::$file_relation as $source => $desc) {
             $sourceFile = $source_path . $source;
             $descFile = $desc_path . $desc;

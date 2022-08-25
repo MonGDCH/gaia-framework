@@ -50,3 +50,9 @@ define('CONFIG_PATH', ROOT_PATH . '/config');
 |
 */
 define('RUNTIME_PATH', ROOT_PATH . '/runtime');
+
+function root_path()
+{
+    var_dump(1);
+    return ROOT_PATH;
+}
