@@ -22,9 +22,9 @@
     "require": {
         "php": ">=7.0.0",
         "mongdch/mon-env": "^1.1",
-        "mongdch/mon-console": "dev-master",
         "workerman/workerman": "^4.1",
-        "mongdch/mon-util": "dev-master"
+        "mongdch/mon-util": "dev-master",
+        "mongdch/mon-console": "^1.1"
     },
     "repositories": {
         "packagist": {
