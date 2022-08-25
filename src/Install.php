@@ -25,7 +25,8 @@ class Install
      * @var array
      */
     protected static $file_relation = [
-        'gaia' => 'gaia'
+        'gaia' => 'gaia',
+        'support/bootstrap.php' => 'support/bootstrap.php'
     ];
 
     /**
