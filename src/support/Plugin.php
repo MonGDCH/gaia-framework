@@ -89,4 +89,20 @@ class Plugin
 
         return key($autoload['psr-4']);
     }
+
+    /**
+     * 初始化
+     *
+     * @return void
+     */
+    protected static function init()
+    {
+        // Plugin.php in vendor
+        $file = __DIR__ . '/../../../../../support/init.php';
+        if (is_file($file)) {
+            require_once $file;
+            return;
+        }
+        require_once __DIR__ . '/init.php';
+    }
 }
