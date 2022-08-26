@@ -11,8 +11,7 @@ use Workerman\Connection\TcpConnection;
 | 加载composer, 处理类文件自动加载
 |
 */
-
-require_once ROOT_PATH . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 
 /*
@@ -94,3 +93,4 @@ Worker::$onMasterReload = function () {
         }
     }
 };
+

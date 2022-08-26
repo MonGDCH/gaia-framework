@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b78912d01fcb1a89fed3c2cdac86bc7a",
+    "content-hash": "39d1a1f1bab9e9eed73ee71774e956c8",
     "packages": [
         {
             "name": "mongdch/mon-console",
@@ -97,7 +97,7 @@
         },
         {
             "name": "mongdch/mon-util",
-            "version": "dev-master",
+            "version": "1.3.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MonGDCH/mon-util.git",
@@ -114,7 +114,6 @@
                 "psr/container": "1.0.0",
                 "psr/log": "^1.1"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -143,7 +142,7 @@
             ],
             "support": {
                 "issues": "https://github.com/MonGDCH/mon-util/issues",
-                "source": "https://github.com/MonGDCH/mon-util/tree/master"
+                "source": "https://github.com/MonGDCH/mon-util/tree/1.3.14"
             },
             "time": "2022-08-25T08:31:42+00:00"
         },
@@ -317,9 +316,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mongdch/mon-util": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

@@ -14,12 +14,12 @@ use gaia\process\Monitor;
 use gaia\interfaces\Bootstrap;
 
 /**
- * 多进程
+ * 进程管理
  * 
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class Process
+class WorkerManage
 {
     use Instance;
 
@@ -200,9 +200,9 @@ class Process
 <?php
 require_once __DIR__ . '/../../support/bootstrap.php';
 
-use gaia\Process;
 use mon\\env\Config;
 use Workerman\Worker;
+use gaia\WorkerManage;
 
 // 打开错误提示
 ini_set('display_errors', 'on');
@@ -214,7 +214,7 @@ if (is_callable('opcache_reset')) {
 }
 
 // 创建启动进程
-Process::instance()->start('$name', $config);
+WorkerManage::instance()->start('$name', $config);
 
 // 启动程序
 Worker::runAll();
