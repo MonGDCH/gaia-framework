@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace gaia\command;
 
-use gaia\WorkerManage;
+use gaia\Gaia;
 use mon\console\Input;
 use mon\console\Output;
 use mon\console\Command;
@@ -23,6 +23,6 @@ class Server extends Command
      */
     public function execute(Input $input, Output $output)
     {
-        WorkerManage::instance()->run();
+        Gaia::instance()->run();
     }
 }

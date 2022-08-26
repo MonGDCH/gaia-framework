@@ -1,6 +1,8 @@
 {
     "name": "mongdch/gaia-framework",
     "description": "The Gaia Framework core",
+    "license": "MIT",
+    "homepage": "http://gdmon.com/",
     "keywords": [
         "mon",
         "workerman",

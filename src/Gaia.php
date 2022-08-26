@@ -12,6 +12,8 @@ use mon\util\Instance;
 use mon\util\Container;
 use gaia\process\Monitor;
 use gaia\interfaces\Bootstrap;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
 
 /**
  * 进程管理
@@ -19,7 +21,7 @@ use gaia\interfaces\Bootstrap;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class WorkerManage
+class Gaia
 {
     use Instance;
 
@@ -38,6 +40,53 @@ class WorkerManage
     protected $callback_map = ['onConnect', 'onMessage', 'onClose', 'onError', 'onBufferFull', 'onBufferDrain', 'onWorkerStop', 'onWebSocketConnect'];
 
     /**
+     * 加载进程，运行程序
+     *
+     * @param string $path
+     * @param string $namespace
+     * @return void
+     */
+    public function runProcess(string $path, string $namespace = 'process')
+    {
+        $dir_iterator = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS | RecursiveDirectoryIterator::FOLLOW_SYMLINKS);
+        $iterator = new RecursiveIteratorIterator($dir_iterator);
+        /** @var RecursiveDirectoryIterator $iterator */
+        foreach ($iterator as $file) {
+            // 获取进程对象名
+            $dirname = dirname(str_replace($path, '', $file->getPathname()));
+            $beforName = str_replace(DIRECTORY_SEPARATOR, '\\', $dirname);
+            $beforNamespace = $beforName == '\\' ? '' : $beforName;
+            $className = $namespace . $beforNamespace . '\\' . $file->getBasename('.php');
+            if (!is_subclass_of($className, '\\gaia\\interfaces\\Process')) {
+                continue;
+            }
+            // 获取进程配置
+            $config = $className::getProcessConfig();
+            // 获取进程名
+            $name = str_replace(DIRECTORY_SEPARATOR, '.', $iterator->getSubPath()) . '.' . $file->getBasename('.php');
+            $name = strtolower(ltrim($name, '.'));
+
+            // 运行
+            if (DIRECTORY_SEPARATOR === '/') {
+                // linux环境
+                $config['handler'] = $className::getProcessHandler();
+                $this->start($name, $config);
+            } else {
+                // windows环境
+                $process_files[] = $this->createProcessClassFile($name, $className);
+            }
+        }
+
+        if (DIRECTORY_SEPARATOR === '/') {
+            // linux环境
+            Worker::runAll();
+        } else {
+            // windows环境
+            $this->runWin($process_files);
+        }
+    }
+
+    /**
      * 运行程序，自动识别运行环境
      *
      * @return void
@@ -51,7 +100,7 @@ class WorkerManage
                 $this->start($name, $config);
             } else {
                 // windows环境
-                $process_files[] = $this->createProcessFile($name, 'process.' . $name);
+                $process_files[] = $this->createProcessConfigFile($name, 'process.' . $name);
             }
         }
         if (DIRECTORY_SEPARATOR === '/') {
@@ -92,10 +141,10 @@ class WorkerManage
      *
      * @param string $name  进程名
      * @param array $config 配置信息
-     * @param Closure|null $startCallback  额外的onworker回调
+     * @param string $handler  业务回调对象名，优先使用config中的handler
      * @return void
      */
-    public function start(string $name, array $config)
+    public function start(string $name, array $config, string $handler = '')
     {
         // 创建worker
         $worker = new Worker($config['listen'] ?? null, $config['context'] ?? []);
@@ -107,18 +156,19 @@ class WorkerManage
             }
         }
         // 进程启动
-        $worker->onWorkerStart = function ($worker) use ($config) {
+        $worker->onWorkerStart = function ($worker) use ($config, $handler) {
             // 执行自定义全局workerStart初始化业务
             $this->startBootstrap($worker);
 
             // 绑定业务回调
-            if (isset($config['handler'])) {
-                if (!class_exists($config['handler'])) {
-                    echo "process error: class {$config['handler']} not exists\r\n";
+            $handler = $config['handler'] ?? $handler;
+            if ($handler) {
+                if (!class_exists($handler)) {
+                    echo "process error: class {$handler} not exists\r\n";
                     return;
                 }
 
-                $instance = Container::instance()->make($config['handler'], $config['constructor'] ?? [], true);
+                $instance = Container::instance()->make($handler, $config['constructor'] ?? [], true);
                 $this->bindWorker($worker, $instance);
             }
         };
@@ -193,16 +243,16 @@ class WorkerManage
      * @param string $config_name
      * @return string
      */
-    public function createProcessFile(string $name, string $config_name): string
+    public function createProcessConfigFile(string $name, string $config_name): string
     {
         $config = "Config::instance()->get('{$config_name}', [])";
         $tmp = <<<EOF
 <?php
 require_once __DIR__ . '/../../support/bootstrap.php';
 
+use gaia\Gaia;
 use mon\\env\Config;
 use Workerman\Worker;
-use gaia\WorkerManage;
 
 // 打开错误提示
 ini_set('display_errors', 'on');
@@ -214,14 +264,55 @@ if (is_callable('opcache_reset')) {
 }
 
 // 创建启动进程
-WorkerManage::instance()->start('$name', $config);
+Gaia::instance()->start('$name', $config);
 
 // 启动程序
 Worker::runAll();
 
 EOF;
 
-        $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/start_' . $name . '.php';
+        $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/start_config_' . $name . '.php';
+        File::instance()->createFile($tmp, $fileName, false);
+        return $fileName;
+    }
+
+    /**
+     * 创建进程启动文件
+     *
+     * @param string $name
+     * @param string $config_name
+     * @return string
+     */
+    public function createProcessClassFile(string $name, string $config_name)
+    {
+        $config = "$config_name::getProcessConfig()";
+        $handler = "$config_name::getProcessHandler()";
+        $tmp = <<<EOF
+<?php
+require_once __DIR__ . '/../../support/bootstrap.php';
+
+use gaia\Gaia;
+use mon\\env\Config;
+use Workerman\Worker;
+
+// 打开错误提示
+ini_set('display_errors', 'on');
+error_reporting(E_ALL);
+
+// 重置opcache
+if (is_callable('opcache_reset')) {
+    opcache_reset();
+}
+
+// 创建启动进程
+Gaia::instance()->start('$name', $config, $handler);
+
+// 启动程序
+Worker::runAll();
+
+EOF;
+
+        $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/start_class_' . $name . '.php';
         File::instance()->createFile($tmp, $fileName, false);
         return $fileName;
     }

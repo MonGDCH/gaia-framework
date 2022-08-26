@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace gaia\process;
 
 use SplFileInfo;
+use gaia\Process;
 use mon\env\Config;
 use Workerman\Timer;
 use Workerman\Worker;
@@ -20,8 +21,18 @@ use RecursiveDirectoryIterator;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class Monitor
+class Monitor extends Process
 {
+    /**
+     * 进程配置
+     *
+     * @var array
+     */
+    protected static $processConfig = [
+        // 关闭进程重载
+        'reloadable' => false
+    ];
+
     /**
      * 监听文件目录
      *
