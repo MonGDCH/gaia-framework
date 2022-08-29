@@ -45,9 +45,10 @@ class Gaia
      * @param string $namespace 命名空间
      * @return void
      */
-    public function run(string $path = '', string $namespace = 'process')
+    public function run(string $path = '', string $namespace = '\process')
     {
         $path = $path ?? defined('PROCESS_PATH') ? PROCESS_PATH : './process';
+        $process_files = [];
         $dir_iterator = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS | RecursiveDirectoryIterator::FOLLOW_SYMLINKS);
         $iterator = new RecursiveIteratorIterator($dir_iterator);
         /** @var RecursiveDirectoryIterator $iterator */
@@ -90,33 +91,7 @@ class Gaia
     }
 
     /**
-     * 运行程序，自动识别运行环境
-     *
-     * @return void
-     */
-    // public function run()
-    // {
-    //     $process_files = [];
-    //     foreach (Config::instance()->get('process', []) as $name => $config) {
-    //         if (DIRECTORY_SEPARATOR === '/') {
-    //             // linux环境
-    //             $this->start($name, $config);
-    //         } else {
-    //             // windows环境
-    //             $process_files[] = $this->createProcessConfigFile($name, 'process.' . $name);
-    //         }
-    //     }
-    //     if (DIRECTORY_SEPARATOR === '/') {
-    //         // linux环境
-    //         Worker::runAll();
-    //     } else {
-    //         // windows环境
-    //         $this->runWin($process_files);
-    //     }
-    // }
-
-    /**
-     * windows环境允许
+     * windows环境运行
      *
      * @param array $files
      * @return void
@@ -242,46 +217,6 @@ class Gaia
     /**
      * 创建进程启动文件
      *
-     * @param string $name
-     * @param string $config_name
-     * @return string
-     */
-    //     public function createProcessConfigFile(string $name, string $config_name): string
-    //     {
-    //         $config = "Config::instance()->get('{$config_name}', [])";
-    //         $tmp = <<<EOF
-    // <?php
-    // require_once __DIR__ . '/../../support/bootstrap.php';
-
-    // use gaia\Gaia;
-    // use mon\\env\Config;
-    // use Workerman\Worker;
-
-    // // 打开错误提示
-    // ini_set('display_errors', 'on');
-    // error_reporting(E_ALL);
-
-    // // 重置opcache
-    // if (is_callable('opcache_reset')) {
-    //     opcache_reset();
-    // }
-
-    // // 创建启动进程
-    // Gaia::instance()->start('$name', $config);
-
-    // // 启动程序
-    // Worker::runAll();
-
-    // EOF;
-
-    //         $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/start_config_' . $name . '.php';
-    //         File::instance()->createFile($tmp, $fileName, false);
-    //         return $fileName;
-    //     }
-
-    /**
-     * 创建进程启动文件
-     *
      * @param string $name  进程名
      * @param string $handlerName  回调名
      * @param string $saveName  保存文件名，默认为进程名
@@ -289,14 +224,13 @@ class Gaia
      */
     public function createProcessFile(string $name, string $handlerName, string $saveName = ''): string
     {
-        $config = "$handlerName::getProcessConfig()";
-        $handler = "$handlerName::class";
+        $config = "\\$handlerName::getProcessConfig()";
+        $handler = "\\$handlerName::class";
         $tmp = <<<EOF
 <?php
 require_once __DIR__ . '/../../support/bootstrap.php';
 
 use gaia\Gaia;
-use mon\\env\Config;
 use Workerman\Worker;
 
 // 打开错误提示

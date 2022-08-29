@@ -10,7 +10,7 @@ use mon\console\Command;
 use mon\env\Config as Env;
 
 /**
- * 配置相关指令
+ * 查看配置
  *
  * @author Mon <98555883@qq.com>
  * @version 1.0.0

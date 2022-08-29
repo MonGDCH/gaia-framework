@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace gaia\command;
 
-use gaia\Gaia;
+use gaia\App;
 use mon\console\Input;
 use mon\console\Output;
 use mon\console\Command;
 
 /**
- * 运行workerman
+ * 查看版本号
  * 
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class Server extends Command
+class Version extends Command
 {
-    protected static $defaultName = 'server';
-    protected static $defaultDescription = 'Run service';
+    protected static $defaultName = 'version';
+    protected static $defaultDescription = 'Show Gaia Version';
 
     /**
      * 执行指令的接口方法
@@ -29,6 +29,6 @@ class Server extends Command
      */
     public function execute(Input $input, Output $output)
     {
-        Gaia::instance()->run();
+        $output->write(App::VERSION);
     }
 }

@@ -15,12 +15,20 @@ use mon\console\App as Console;
 class App
 {
     /**
+     * 版本号
+     * 
+     * @var string
+     */
+    const VERSION = '1.0.0';
+
+    /**
      * 应用初始化
      *
      * @return void
      */
     public static function init()
     {
+        // 注册指令
         $path = __DIR__ . '/command';
         $namespance = 'gaia\\command';
         Console::instance()->load($path, $namespance);
