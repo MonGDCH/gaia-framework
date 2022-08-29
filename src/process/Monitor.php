@@ -9,7 +9,6 @@ use gaia\Process;
 use mon\env\Config;
 use Workerman\Timer;
 use Workerman\Worker;
-use FilesystemIterator;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
@@ -119,7 +118,7 @@ class Monitor extends Process
             $iterator = [new SplFileInfo($monitor_dir)];
         } else {
             // 遍历文件目录
-            $dir_iterator = new RecursiveDirectoryIterator($monitor_dir, FilesystemIterator::SKIP_DOTS | FilesystemIterator::FOLLOW_SYMLINKS);
+            $dir_iterator = new RecursiveDirectoryIterator($monitor_dir, RecursiveDirectoryIterator::SKIP_DOTS | RecursiveDirectoryIterator::FOLLOW_SYMLINKS);
             $iterator = new RecursiveIteratorIterator($dir_iterator);
         }
         $count = 0;

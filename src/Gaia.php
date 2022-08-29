@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace gaia;
 
-use Closure;
 use mon\util\File;
 use mon\env\Config;
 use Workerman\Worker;
@@ -42,12 +41,13 @@ class Gaia
     /**
      * 加载进程，运行程序
      *
-     * @param string $path
-     * @param string $namespace
+     * @param string $path  进程加载文件路径
+     * @param string $namespace 命名空间
      * @return void
      */
-    public function runProcess(string $path, string $namespace = 'process')
+    public function run(string $path = '', string $namespace = 'process')
     {
+        $path = $path ?? defined('PROCESS_PATH') ? PROCESS_PATH : './process';
         $dir_iterator = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS | RecursiveDirectoryIterator::FOLLOW_SYMLINKS);
         $iterator = new RecursiveIteratorIterator($dir_iterator);
         /** @var RecursiveDirectoryIterator $iterator */
@@ -69,19 +69,22 @@ class Gaia
             // 运行
             if (DIRECTORY_SEPARATOR === '/') {
                 // linux环境
-                $config['handler'] = $className::getProcessHandler();
-                $this->start($name, $config);
+                $this->start($name, $config, $className);
             } else {
                 // windows环境
-                $process_files[] = $this->createProcessClassFile($name, $className);
+                $saveName = str_replace('.', '_', $name);
+                $process_files[] = $this->createProcessFile($name, $className, $saveName);
             }
         }
-
+        // 运行内置monitor进程，启动进程
+        $name = 'monitor';
         if (DIRECTORY_SEPARATOR === '/') {
             // linux环境
+            $this->start($name, Monitor::getProcessConfig(), Monitor::class);
             Worker::runAll();
         } else {
             // windows环境
+            $process_files[] = $this->createProcessFile($name, Monitor::class, $name);
             $this->runWin($process_files);
         }
     }
@@ -91,26 +94,26 @@ class Gaia
      *
      * @return void
      */
-    public function run()
-    {
-        $process_files = [];
-        foreach (Config::instance()->get('process', []) as $name => $config) {
-            if (DIRECTORY_SEPARATOR === '/') {
-                // linux环境
-                $this->start($name, $config);
-            } else {
-                // windows环境
-                $process_files[] = $this->createProcessConfigFile($name, 'process.' . $name);
-            }
-        }
-        if (DIRECTORY_SEPARATOR === '/') {
-            // linux环境
-            Worker::runAll();
-        } else {
-            // windows环境
-            $this->runWin($process_files);
-        }
-    }
+    // public function run()
+    // {
+    //     $process_files = [];
+    //     foreach (Config::instance()->get('process', []) as $name => $config) {
+    //         if (DIRECTORY_SEPARATOR === '/') {
+    //             // linux环境
+    //             $this->start($name, $config);
+    //         } else {
+    //             // windows环境
+    //             $process_files[] = $this->createProcessConfigFile($name, 'process.' . $name);
+    //         }
+    //     }
+    //     if (DIRECTORY_SEPARATOR === '/') {
+    //         // linux环境
+    //         Worker::runAll();
+    //     } else {
+    //         // windows环境
+    //         $this->runWin($process_files);
+    //     }
+    // }
 
     /**
      * windows环境允许
@@ -243,50 +246,51 @@ class Gaia
      * @param string $config_name
      * @return string
      */
-    public function createProcessConfigFile(string $name, string $config_name): string
-    {
-        $config = "Config::instance()->get('{$config_name}', [])";
-        $tmp = <<<EOF
-<?php
-require_once __DIR__ . '/../../support/bootstrap.php';
+    //     public function createProcessConfigFile(string $name, string $config_name): string
+    //     {
+    //         $config = "Config::instance()->get('{$config_name}', [])";
+    //         $tmp = <<<EOF
+    // <?php
+    // require_once __DIR__ . '/../../support/bootstrap.php';
 
-use gaia\Gaia;
-use mon\\env\Config;
-use Workerman\Worker;
+    // use gaia\Gaia;
+    // use mon\\env\Config;
+    // use Workerman\Worker;
 
-// 打开错误提示
-ini_set('display_errors', 'on');
-error_reporting(E_ALL);
+    // // 打开错误提示
+    // ini_set('display_errors', 'on');
+    // error_reporting(E_ALL);
 
-// 重置opcache
-if (is_callable('opcache_reset')) {
-    opcache_reset();
-}
+    // // 重置opcache
+    // if (is_callable('opcache_reset')) {
+    //     opcache_reset();
+    // }
 
-// 创建启动进程
-Gaia::instance()->start('$name', $config);
+    // // 创建启动进程
+    // Gaia::instance()->start('$name', $config);
 
-// 启动程序
-Worker::runAll();
+    // // 启动程序
+    // Worker::runAll();
 
-EOF;
+    // EOF;
 
-        $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/start_config_' . $name . '.php';
-        File::instance()->createFile($tmp, $fileName, false);
-        return $fileName;
-    }
+    //         $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/start_config_' . $name . '.php';
+    //         File::instance()->createFile($tmp, $fileName, false);
+    //         return $fileName;
+    //     }
 
     /**
      * 创建进程启动文件
      *
-     * @param string $name
-     * @param string $config_name
+     * @param string $name  进程名
+     * @param string $handlerName  回调名
+     * @param string $saveName  保存文件名，默认为进程名
      * @return string
      */
-    public function createProcessClassFile(string $name, string $config_name)
+    public function createProcessFile(string $name, string $handlerName, string $saveName = ''): string
     {
-        $config = "$config_name::getProcessConfig()";
-        $handler = "$config_name::getProcessHandler()";
+        $config = "$handlerName::getProcessConfig()";
+        $handler = "$handlerName::class";
         $tmp = <<<EOF
 <?php
 require_once __DIR__ . '/../../support/bootstrap.php';
@@ -312,7 +316,8 @@ Worker::runAll();
 
 EOF;
 
-        $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/start_class_' . $name . '.php';
+        $saveName = $saveName ?: $name;
+        $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/start_' . $saveName . '.php';
         File::instance()->createFile($tmp, $fileName, false);
         return $fileName;
     }

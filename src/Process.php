@@ -22,13 +22,6 @@ abstract class Process implements InterfacesProcess
     protected static $processConfig = [];
 
     /**
-     * 进程回调
-     *
-     * @var string
-     */
-    protected static $processHandler = __CLASS__;
-
-    /**
      * 获取进程配置
      *
      * @return array
@@ -36,15 +29,5 @@ abstract class Process implements InterfacesProcess
     public static function getProcessConfig(): array
     {
         return static::$processConfig;
-    }
-
-    /**
-     * 获取进程回调
-     *
-     * @return string
-     */
-    public static function getProcessHandler(): string
-    {
-        return static::$processHandler;
     }
 }

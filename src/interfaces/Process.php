@@ -18,11 +18,4 @@ interface Process
      * @return array
      */
     public static function getProcessConfig(): array;
-
-    /**
-     * 获取进程回调
-     *
-     * @return string
-     */
-    public static function getProcessHandler(): string;
 }
