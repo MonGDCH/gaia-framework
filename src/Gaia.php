@@ -224,14 +224,11 @@ class Gaia
      */
     public function createProcessFile(string $name, string $handlerName, string $saveName = ''): string
     {
-        $config = "\\$handlerName::getProcessConfig()";
-        $handler = "\\$handlerName::class";
+        $config = "$handlerName::getProcessConfig()";
+        $handler = "$handlerName::class";
         $tmp = <<<EOF
 <?php
 require_once __DIR__ . '/../../support/bootstrap.php';
-
-use gaia\Gaia;
-use Workerman\Worker;
 
 // 打开错误提示
 ini_set('display_errors', 'on');
@@ -243,10 +240,10 @@ if (is_callable('opcache_reset')) {
 }
 
 // 创建启动进程
-Gaia::instance()->start('$name', $config, $handler);
+\gaia\Gaia::instance()->start('$name', $config, $handler);
 
 // 启动程序
-Worker::runAll();
+\Workerman\Worker::runAll();
 
 EOF;
 
