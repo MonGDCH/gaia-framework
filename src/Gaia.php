@@ -47,7 +47,7 @@ class Gaia
      */
     public function run(string $path = '', string $namespace = '\process')
     {
-        $path = $path ?? defined('PROCESS_PATH') ? PROCESS_PATH : './process';
+        $path = empty($path) ? (defined('PROCESS_PATH') ? PROCESS_PATH : './process') : $path;
         $process_files = [];
         $dir_iterator = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS | RecursiveDirectoryIterator::FOLLOW_SYMLINKS);
         $iterator = new RecursiveIteratorIterator($dir_iterator);
