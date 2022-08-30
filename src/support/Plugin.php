@@ -75,7 +75,7 @@ class Plugin
      */
     public static function copydir($source, $dest, $overwrite = false)
     {
-        $dest = ROOT_PATH . $dest;
+        $dest = ROOT_PATH . DIRECTORY_SEPARATOR . $dest;
         File::instance()->createDir($dest);
         echo "Create Dir $dest\r\n";
         $dir_iterator = new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS);
@@ -108,7 +108,7 @@ class Plugin
      */
     public static function copyFile($source, $dest, $overwrite = false)
     {
-        $dest = ROOT_PATH . $dest;
+        $dest = ROOT_PATH . DIRECTORY_SEPARATOR . $dest;
         File::instance()->copyFile($source, $dest, $overwrite);
         echo "Create File $dest\r\n";
     }
