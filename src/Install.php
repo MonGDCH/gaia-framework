@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace gaia;
 
-use mon\util\File;
+use support\Plugin;
 
 /**
  * Gaia框架安装驱动
@@ -40,12 +40,9 @@ class Install
     {
         // 创建框架文件
         $source_path = __DIR__ . DIRECTORY_SEPARATOR;
-        $desc_path = ROOT_PATH . DIRECTORY_SEPARATOR;
-        foreach (static::$file_relation as $source => $desc) {
+        foreach (static::$file_relation as $source => $dest) {
             $sourceFile = $source_path . $source;
-            $descFile = $desc_path . $desc;
-            File::instance()->copyFile($sourceFile, $descFile, true);
-            echo "Create File $descFile\r\n";
+            Plugin::copyFile($sourceFile, $dest, true);
         }
     }
 

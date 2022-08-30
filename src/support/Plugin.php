@@ -2,6 +2,10 @@
 
 namespace support;
 
+use mon\util\File;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+
 /**
  * 插件安装驱动，兼容webman插件
  * 
@@ -19,6 +23,7 @@ class Plugin
      */
     public static function install($event)
     {
+        static::init();
         $namespace = static::getNamespace($event);
         if (is_null($namespace)) {
             return;
@@ -48,6 +53,7 @@ class Plugin
      */
     public static function uninstall($event)
     {
+        static::init();
         $namespace = static::getNamespace($event);
         if (is_null($namespace)) {
             return;
@@ -57,6 +63,54 @@ class Plugin
         if (static::checkPlugin($namespace) && is_callable($uninstall_function)) {
             $uninstall_function();
         }
+    }
+
+    /**
+     * 复制文件夹
+     *
+     * @param string $source 源文件夹
+     * @param string $dest   目标文件夹
+     * @param boolean $overwrite   文件是否覆盖，默认不覆盖
+     * @return void
+     */
+    public static function copydir($source, $dest, $overwrite = false)
+    {
+        $dest = ROOT_PATH . $dest;
+        File::instance()->createDir($dest);
+        echo "Create Dir $dest\r\n";
+        $dir_iterator = new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS);
+        $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
+        /** @var RecursiveDirectoryIterator $iterator */
+        foreach ($iterator as $item) {
+            if ($item->isDir()) {
+                $sontDir = $dest . '/' . $iterator->getSubPathName();
+                File::instance()->createDir($sontDir);
+                echo "Create Dir $sontDir\r\n";
+            } else {
+                $file = $dest . '/' . $iterator->getSubPathName();
+                if (file_exists($file) && !$overwrite) {
+                    continue;
+                }
+
+                copy($item, $file);
+                echo "Create File $file\r\n";
+            }
+        }
+    }
+
+    /**
+     * 复制文件
+     *
+     * @param string $source    源文件
+     * @param string $dest  目标文件
+     * @param boolean $overwrite    文件是否覆盖，默认不覆盖
+     * @return void
+     */
+    public static function copyFile($source, $dest, $overwrite = false)
+    {
+        $dest = ROOT_PATH . $dest;
+        File::instance()->copyFile($source, $dest, $overwrite);
+        echo "Create File $dest\r\n";
     }
 
     /**
