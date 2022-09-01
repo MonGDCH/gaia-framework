@@ -12,7 +12,6 @@ use Workerman\Worker;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
-
 /**
  * 应用监管服务
  * 
@@ -57,8 +56,8 @@ class Monitor extends Process
             echo "\nMonitor file change turned off because exec() has been disabled by disable_functions setting in " . PHP_CONFIG_FILE_PATH . "/php.ini\n";
         }
 
-        $this->_paths = Config::instance()->get('monitor.paths', []);
-        $this->_extensions = Config::instance()->get('monitor.exts', []);
+        $this->_paths = Config::instance()->get('app.monitor.paths', []);
+        $this->_extensions = Config::instance()->get('app.monitor.exts', []);
     }
 
     /**
