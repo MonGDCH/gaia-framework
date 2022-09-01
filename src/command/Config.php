@@ -21,6 +21,15 @@ class Config extends Command
     protected static $defaultDescription = 'Config utils';
 
     /**
+     * 构造方法
+     */
+    public function __construct()
+    {
+        // 加载配置
+        defined('CONFIG_PATH') && Env::instance()->loadDir(CONFIG_PATH);
+    }
+
+    /**
      * 执行指令
      *
      * @param  Input  $in  输入实例

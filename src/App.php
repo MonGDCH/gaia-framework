@@ -24,13 +24,14 @@ class App
     /**
      * 应用初始化
      *
+     * @param Console $console  执行管理器实例
      * @return void
-     */
-    public static function init()
+     */    
+    public static function init(Console $console)
     {
         // 注册指令
         $path = __DIR__ . '/command';
         $namespance = 'gaia\\command';
-        Console::instance()->load($path, $namespance);
+        $console->load($path, $namespance);
     }
 }

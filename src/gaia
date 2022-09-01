@@ -11,7 +11,7 @@ require __DIR__ . '/support/bootstrap.php';
 | 这里获取指令应用实例
 |
 */
-$console = \mon\console\App::instance();
+$console = new \mon\console\App;
 
 
 /*
@@ -21,7 +21,7 @@ $console = \mon\console\App::instance();
 | 这里对Gaia进行初始化
 |
 */
-\gaia\App::init();
+\gaia\App::init($console);
 
 
 /*

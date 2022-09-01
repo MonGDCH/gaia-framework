@@ -29,14 +29,46 @@ class Gaia
      *
      * @var array
      */
-    protected $property_map = ['count', 'user', 'group', 'reloadable', 'reusePort', 'transport', 'protocol'];
+    protected $property_map = [
+        // 进程数
+        'count',
+        // 进程用户
+        'user',
+        // 进程用户组
+        'group',
+        // 是否允许进程重载
+        'reloadable',
+        // 是否允许端口复用
+        'reusePort',
+        // 通信协议
+        'transport',
+        // 连接的协议类
+        'protocol'
+    ];
 
     /**
      * 回调处理参数
      *
      * @var array
      */
-    protected $callback_map = ['onConnect', 'onMessage', 'onClose', 'onError', 'onBufferFull', 'onBufferDrain', 'onWorkerStop', 'onWebSocketConnect'];
+    protected $callback_map = [
+        // 建立连接时
+        'onConnect',
+        // 接收消息是
+        'onMessage',
+        // 断开连接是
+        'onClose',
+        // 连接发生错误时
+        'onError',
+        // 数据缓冲区满载时
+        'onBufferFull',
+        // 应用层发送缓冲区数据全部发送完成时
+        'onBufferDrain',
+        // 进程关闭时
+        'onWorkerStop',
+        // websocket链接时
+        'onWebSocketConnect'
+    ];
 
     /**
      * 加载进程，运行程序
@@ -136,7 +168,7 @@ class Gaia
         // 进程启动
         $worker->onWorkerStart = function ($worker) use ($config, $handler) {
             // 执行自定义全局workerStart初始化业务
-            $this->startBootstrap($worker);
+            $this->bootstrap($worker);
 
             // 绑定业务回调
             $handler = $config['handler'] ?? $handler;
@@ -158,8 +190,17 @@ class Gaia
      * @param Worker $worker
      * @return void
      */
-    protected function startBootstrap(Worker $worker)
+    protected function bootstrap(Worker $worker)
     {
+        // 加载配置文件
+        defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
+        // 定义时区
+        date_default_timezone_set(Config::instance()->get('app.timezone', 'PRC'));
+        // 加载自动加载文件列表
+        foreach (Config::instance()->get('autoload', []) as $file) {
+            include_once $file;
+        }
+        // 执行初始化钩子
         $bootstraps = Config::instance()->get('bootstrap', []);
         foreach ($bootstraps as $bootstrap) {
             if (!class_exists($bootstrap)) {
@@ -228,7 +269,7 @@ class Gaia
         $handler = "$handlerName::class";
         $tmp = <<<EOF
 <?php
-require_once __DIR__ . '/../../support/bootstrap.php';
+require_once __DIR__ . '/../../verdor/autoload.php';
 
 // 打开错误提示
 ini_set('display_errors', 'on');
