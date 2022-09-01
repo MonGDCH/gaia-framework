@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace gaia;
 
+use mon\env\Config;
 use mon\console\App as Console;
 
 /**
@@ -26,9 +27,11 @@ class App
      *
      * @param Console $console  执行管理器实例
      * @return void
-     */    
+     */
     public static function init(Console $console)
     {
+        // 加载配置
+        defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
         // 注册指令
         $path = __DIR__ . '/command';
         $namespance = 'gaia\\command';
