@@ -269,7 +269,7 @@ class Gaia
         $handler = "$handlerName::class";
         $tmp = <<<EOF
 <?php
-require_once __DIR__ . '/../../verdor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 // 打开错误提示
 ini_set('display_errors', 'on');
