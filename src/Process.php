@@ -15,11 +15,28 @@ use gaia\interfaces\Process as InterfacesProcess;
 abstract class Process implements InterfacesProcess
 {
     /**
+     * 启用进程
+     *
+     * @var boolean
+     */
+    protected static $enable = true;
+
+    /**
      * 进程配置
      *
      * @var array
      */
     protected static $processConfig = [];
+
+    /**
+     * 是否启用进程
+     *
+     * @return boolean
+     */
+    public static function enable(): bool
+    {
+        return static::$enable;
+    }
 
     /**
      * 获取进程配置

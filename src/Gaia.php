@@ -93,6 +93,10 @@ class Gaia
             if (!is_subclass_of($className, '\\gaia\\interfaces\\Process')) {
                 continue;
             }
+            // 是否启用进程
+            if (!$className::enable()) {
+                continue;
+            }
             // 获取进程配置
             $config = $className::getProcessConfig();
             // 获取进程名
