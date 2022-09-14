@@ -15,10 +15,10 @@ use mon\console\Command;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class Server extends Command
+class Status extends Command
 {
-    protected static $defaultName = 'server';
-    protected static $defaultDescription = 'Run service';
+    protected static $defaultName = 'status';
+    protected static $defaultDescription = 'Show worker status. Use mode -d to show live status.';
 
     /**
      * 执行指令的接口方法
@@ -29,6 +29,9 @@ class Server extends Command
      */
     public function execute(Input $input, Output $output)
     {
+        if (DIRECTORY_SEPARATOR !== '/') {
+            return $output->error('The `' . self::$defaultName . '` command for windows env not supported!');
+        }
         Gaia::instance()->run();
     }
 }

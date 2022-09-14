@@ -19,7 +19,7 @@ use mon\console\Command;
  */
 class PharBuild extends Command
 {
-    protected static $defaultName = 'phar:build';
+    protected static $defaultName = 'phar';
     protected static $defaultDescription = 'Build packaged a project into phar';
 
     /**
@@ -31,6 +31,9 @@ class PharBuild extends Command
      */
     public function execute(Input $input, Output $output)
     {
+        if (DIRECTORY_SEPARATOR !== '/') {
+            return $output->error('The `' . self::$defaultName . '` command command for windows env not supported!');
+        }
         // 是否启用phar扩展
         if (!class_exists(Phar::class, false)) {
             return $output->error("The 'phar' extension is required for build phar package");

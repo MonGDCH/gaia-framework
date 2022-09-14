@@ -174,6 +174,11 @@ class Gaia
             // 执行自定义全局workerStart初始化业务
             $this->bootstrap($worker);
 
+            // 记录worker信息
+            if (DIRECTORY_SEPARATOR === '/') {
+                WorkerMap::instance()->setWorkerMap($worker->name, $worker->id, posix_getpid());
+            }
+
             // 绑定业务回调
             $handler = $config['handler'] ?? $handler;
             if ($handler) {
@@ -182,7 +187,7 @@ class Gaia
                     return;
                 }
 
-                $instance = Container::instance()->make($handler, $config['constructor'] ?? [], true);
+                $instance = Container::instance()->make($handler, $config['constructor'] ?? []);
                 $this->bindWorker($worker, $instance);
             }
         };
