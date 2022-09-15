@@ -12,6 +12,7 @@ use mon\util\Container;
 use gaia\process\Monitor;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use gaia\interfaces\ProcessInterface;
 use gaia\interfaces\BootstrapInterface;
 
 /**
@@ -93,7 +94,7 @@ class Gaia
             $beforName = str_replace(DIRECTORY_SEPARATOR, '\\', $dirname);
             $beforNamespace = $beforName == '\\' ? '' : $beforName;
             $className = $namespace . $beforNamespace . '\\' . $file->getBasename('.php');
-            if (!is_subclass_of($className, '\\gaia\\interfaces\\Process')) {
+            if (!is_subclass_of($className, ProcessInterface::class)) {
                 continue;
             }
             // 是否启用进程
