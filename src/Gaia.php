@@ -77,7 +77,7 @@ class Gaia
      * @param string $namespace 命名空间
      * @return void
      */
-    public function run(string $path = '', string $namespace = '\process')
+    public function run(string $path = '', string $namespace = '\process'): void
     {
         // 初始化worker-map
         WorkerMap::instance()->init();
@@ -135,7 +135,7 @@ class Gaia
      * @param array $files
      * @return void
      */
-    public function runWin(array $files)
+    public function runWin(array $files): void
     {
         $resource = $this->open_process($files);
         // windows环境需要重新创建监听服务
@@ -161,7 +161,7 @@ class Gaia
      * @param string $handler   业务回调对象名，优先使用config中的handler
      * @return void
      */
-    public function start(string $name, array $config, string $handler = '')
+    public function start(string $name, array $config, string $handler = ''): void
     {
         // 创建worker
         $worker = new Worker($config['listen'] ?? null, $config['context'] ?? []);
@@ -202,7 +202,7 @@ class Gaia
      * @param Worker $worker
      * @return void
      */
-    protected function bootstrap(Worker $worker)
+    protected function bootstrap(Worker $worker): void
     {
         // 加载配置文件
         defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
@@ -236,7 +236,7 @@ class Gaia
      * @param mixed $handler    回调实例
      * @return void
      */
-    protected function bindWorker(Worker $worker, $handler)
+    protected function bindWorker(Worker $worker, object $handler): void
     {
         // 绑定事件回调
         foreach ($this->callback_map as $name) {

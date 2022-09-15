@@ -66,7 +66,7 @@ class Monitor extends Process
      * @param Worker $worker
      * @return void
      */
-    public function onWorkerStart(Worker $worker)
+    public function onWorkerStart(Worker $worker): void
     {
         // 监听文件更新
         if (!Worker::$daemonize) {
@@ -157,7 +157,7 @@ class Monitor extends Process
      * @param integer $memory_limit
      * @return void
      */
-    public function checkMemory(int $memory_limit)
+    public function checkMemory(int $memory_limit): void
     {
         $ppid = posix_getppid();
         $children_file = "/proc/$ppid/task/$ppid/children";

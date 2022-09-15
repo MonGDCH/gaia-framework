@@ -20,5 +20,5 @@ interface Bootstrap
      * @param Worker $worker
      * @return void
      */
-    public static function start(Worker $worker);
+    public static function start(Worker $worker): void;
 }
