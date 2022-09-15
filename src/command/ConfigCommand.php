@@ -15,7 +15,7 @@ use mon\env\Config as Env;
  * @author Mon <98555883@qq.com>
  * @version 1.0.0
  */
-class Config extends Command
+class ConfigCommand extends Command
 {
     protected static $defaultName = 'config';
     protected static $defaultDescription = 'Config utils';

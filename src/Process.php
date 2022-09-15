@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace gaia;
 
-use gaia\interfaces\Process as InterfacesProcess;
+use gaia\interfaces\ProcessInterface;
 
 /**
  * 进程服务基类
@@ -12,7 +12,7 @@ use gaia\interfaces\Process as InterfacesProcess;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-abstract class Process implements InterfacesProcess
+abstract class Process implements ProcessInterface
 {
     /**
      * 启用进程

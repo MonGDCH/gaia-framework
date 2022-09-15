@@ -12,7 +12,7 @@ use Workerman\Worker;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-interface Bootstrap
+interface BootstrapInterface
 {
     /**
      * 执行业务

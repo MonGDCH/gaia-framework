@@ -10,9 +10,9 @@ use Workerman\Worker;
 use mon\util\Instance;
 use mon\util\Container;
 use gaia\process\Monitor;
-use gaia\interfaces\Bootstrap;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use gaia\interfaces\BootstrapInterface;
 
 /**
  * 进程管理
@@ -219,12 +219,12 @@ class Gaia
                 echo "Warning: Class $bootstrap setting in config/bootstrap.php not found\r\n";
                 continue;
             }
-            if (!is_subclass_of($bootstrap, Bootstrap::class)) {
-                echo "Warning: Class $bootstrap not implements " . Bootstrap::class . "\r\n";
+            if (!is_subclass_of($bootstrap, BootstrapInterface::class)) {
+                echo "Warning: Class $bootstrap not implements " . BootstrapInterface::class . "\r\n";
                 continue;
             }
 
-            /** @var Bootstrap $bootstrap */
+            /** @var BootstrapInterface $bootstrap */
             $bootstrap::start($worker);
         }
     }

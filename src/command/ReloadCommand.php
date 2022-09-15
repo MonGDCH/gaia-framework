@@ -16,7 +16,7 @@ use mon\console\Command;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class Reload extends Command
+class ReloadCommand extends Command
 {
     protected static $defaultName = 'reload';
     protected static $defaultDescription = 'Reload worker. Use -g to reload gracefully. Reload worker name can be specify.';

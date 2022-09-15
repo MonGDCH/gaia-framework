@@ -15,10 +15,10 @@ use mon\console\Command;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class Status extends Command
+class StartCommand extends Command
 {
-    protected static $defaultName = 'status';
-    protected static $defaultDescription = 'Show worker status. Use mode -d to show live status.';
+    protected static $defaultName = 'start';
+    protected static $defaultDescription = 'Start worker in DEBUG mode. Use mode -d to start in DAEMON mode. Use mode -g to stop gracefully.';
 
     /**
      * 执行指令的接口方法
@@ -29,9 +29,6 @@ class Status extends Command
      */
     public function execute(Input $input, Output $output)
     {
-        if (DIRECTORY_SEPARATOR !== '/') {
-            return $output->error('The `' . self::$defaultName . '` command for windows env not supported!');
-        }
         Gaia::instance()->run();
     }
 }

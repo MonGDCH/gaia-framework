@@ -16,10 +16,10 @@ use mon\console\Command;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class Stop extends Command
+class RestartCommand extends Command
 {
-    protected static $defaultName = 'stop';
-    protected static $defaultDescription = 'Stop worker. Use mode -g to stop gracefully.';
+    protected static $defaultName = 'restart';
+    protected static $defaultDescription = 'Restart workers. Use mode -d to start in DAEMON mode.';
 
     /**
      * 执行指令的接口方法

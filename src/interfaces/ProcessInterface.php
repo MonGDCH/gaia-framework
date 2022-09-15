@@ -10,7 +10,7 @@ namespace gaia\interfaces;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-interface Process
+interface ProcessInterface
 {
     /**
      * 是否启用进程

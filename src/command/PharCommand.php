@@ -17,7 +17,7 @@ use mon\console\Command;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class PharBuild extends Command
+class PharCommand extends Command
 {
     protected static $defaultName = 'phar';
     protected static $defaultDescription = 'Build packaged a project into phar';

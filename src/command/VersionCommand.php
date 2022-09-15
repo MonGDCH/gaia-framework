@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace gaia\command;
 
-use gaia\Gaia;
+use gaia\App;
 use mon\console\Input;
 use mon\console\Output;
 use mon\console\Command;
 
 /**
- * 运行workerman
+ * 查看版本号
  * 
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class Connections extends Command
+class VersionCommand extends Command
 {
-    protected static $defaultName = 'connections';
-    protected static $defaultDescription = 'Show worker connections.';
+    protected static $defaultName = 'version';
+    protected static $defaultDescription = 'Show Gaia Version';
 
     /**
      * 执行指令的接口方法
@@ -29,9 +29,6 @@ class Connections extends Command
      */
     public function execute(Input $input, Output $output)
     {
-        if (DIRECTORY_SEPARATOR !== '/') {
-            return $output->error('The `' . self::$defaultName . '` command for windows env not supported!');
-        }
-        Gaia::instance()->run();
+        $output->write(App::VERSION, true, true);
     }
 }
