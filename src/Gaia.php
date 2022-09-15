@@ -54,9 +54,9 @@ class Gaia
     protected $callback_map = [
         // 建立连接时
         'onConnect',
-        // 接收消息是
+        // 接收消息时
         'onMessage',
-        // 断开连接是
+        // 断开连接时
         'onClose',
         // 连接发生错误时
         'onError',
@@ -65,7 +65,7 @@ class Gaia
         // 应用层发送缓冲区数据全部发送完成时
         'onBufferDrain',
         // 进程关闭时
-        'onWorkerStop',
+        // 'onWorkerStop',
         // websocket链接时
         'onWebSocketConnect'
     ];
@@ -79,6 +79,9 @@ class Gaia
      */
     public function run(string $path = '', string $namespace = '\process')
     {
+        // 初始化worker-map
+        WorkerMap::instance()->init();
+        // 加载进程
         $path = empty($path) ? (defined('PROCESS_PATH') ? PROCESS_PATH : './process') : $path;
         $process_files = [];
         $dir_iterator = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS | RecursiveDirectoryIterator::FOLLOW_SYMLINKS);
@@ -153,9 +156,9 @@ class Gaia
     /**
      * 运行一个进程
      *
-     * @param string $name  进程名
-     * @param array $config 配置信息
-     * @param string $handler  业务回调对象名，优先使用config中的handler
+     * @param string $name      进程名
+     * @param array $config     配置信息
+     * @param string $handler   业务回调对象名，优先使用config中的handler
      * @return void
      */
     public function start(string $name, array $config, string $handler = '')
@@ -245,6 +248,16 @@ class Gaia
         if (method_exists($handler, 'onWorkerStart')) {
             $handler->onWorkerStart($worker);
         }
+
+        // 进程关闭
+        $worker->onWorkerStop = function ($worker) use ($handler) {
+            // 删除进程信息文件
+            WorkerMap::instance()->removeWorkerMap($worker->name, $worker->id);
+            // 指定自定义回调
+            if (method_exists($handler, 'onWorkerStop')) {
+                $handler->onWorkerStop($worker);
+            }
+        };
     }
 
     /**

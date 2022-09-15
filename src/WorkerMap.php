@@ -6,6 +6,8 @@ namespace gaia;
 
 use mon\util\File;
 use mon\util\Instance;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
 
 /**
  * worker进程信息
@@ -18,31 +20,47 @@ class WorkerMap
     use Instance;
 
     /**
-     * 数据持久化文件
-     *
-     * @var string
-     */
-    protected $worker_file = './runtime/gaia.workermap';
-
-    /**
      * 所有worker的进程信息，只在linux环境下有效
      * 格式：['worker name' => ['worker id' => 'worker pid', 'worker id 2' => 'worker pid 2']]
      * 
      * @var array
      */
-    protected $worker_map = [];
+    protected $data = [];
+
+    /**
+     * 数据持久化文件
+     *
+     * @var string
+     */
+    protected $data_dir = './runtime/gaia/map';
 
     /**
      * 私有构造方法
      */
     protected function __construct()
     {
+        // 初始化
+        $this->init();
+        // 加载持久化数据
+        $this->data = $this->parseWorkerMap();
+    }
+
+    /**
+     * 初始化
+     *
+     * @return WorkerMap
+     */
+    public function init(): WorkerMap
+    {
         // 数据持久化文件
         if (defined('RUNTIME_PATH')) {
-            $this->worker_file = RUNTIME_PATH . '/gaia.workermap';
+            $this->data_dir = RUNTIME_PATH . '/gaia/map';
         }
-        // 加载持久化数据
-        $this->worker_map = $this->parseWorkerMap();
+        if (!is_dir($this->data_dir)) {
+            File::instance()->createDir($this->data_dir);
+        }
+
+        return $this;
     }
 
     /**
@@ -54,10 +72,10 @@ class WorkerMap
     public function getWorkerMap(string $name = ''): array
     {
         if (empty($name)) {
-            return $this->worker_map;
+            return $this->data;
         }
 
-        return $this->worker_map[$name] ?? [];
+        return $this->data[$name] ?? [];
     }
 
     /**
@@ -72,15 +90,35 @@ class WorkerMap
     public function setWorkerMap(string $name, int $id, int $pid, bool $save = true): WorkerMap
     {
         // 设置worker信息
-        $this->worker_map[$name][$id] = $pid;
+        $this->data[$name][$id] = $pid;
         // 持久化保存
         if ($save) {
-            $arr = [$name, $id, $pid];
-            $line = implode(',', $arr) . PHP_EOL;
-            File::instance()->createFile($line, $this->worker_file);
+            $fileName = $name . '_' . $id;
+            $path = $this->data_dir . DIRECTORY_SEPARATOR . $fileName;
+            File::instance()->createFile($pid, $path, false);
         }
 
         return $this;
+    }
+
+    /**
+     * 删除worker信息
+     *
+     * @param string $name  进程名
+     * @param integer $id   进程ID
+     * @param boolean $save 数据是否持久化保存
+     * @return boolean
+     */
+    public function removeWorkerMap(string $name, int $id, bool $save = true): bool
+    {
+        unset($this->data[$name][$id]);
+        if ($save) {
+            $fileName = $name . '_' . $id;
+            $path = $this->data_dir . DIRECTORY_SEPARATOR . $fileName;
+            return File::instance()->removeFile($path);
+        }
+
+        return true;
     }
 
     /**
@@ -90,8 +128,15 @@ class WorkerMap
      */
     public function clearWorkerMap(): bool
     {
-        $this->worker_map = [];
-        return File::instance()->removeFile($this->worker_file);
+        $this->data = [];
+        $iterator = new RecursiveDirectoryIterator($this->data_dir, RecursiveDirectoryIterator::SKIP_DOTS | RecursiveDirectoryIterator::FOLLOW_SYMLINKS);
+        $iterator = new RecursiveIteratorIterator($iterator);
+        /** @var RecursiveDirectoryIterator $iterator */
+        foreach ($iterator as $file) {
+            File::instance()->removeFile($file);
+        }
+
+        return true;
     }
 
     /**
@@ -102,15 +147,14 @@ class WorkerMap
     protected function parseWorkerMap(): array
     {
         $result = [];
-        if (!file_exists($this->worker_file)) {
-            // 文件不存在，直接放回空数组
-            return $result;
-        }
-        // 读取文件，解析信息
-        $fileContent = file($this->worker_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ((array)$fileContent as $line) {
-            [$name, $id, $pid] = explode(',', $line, 3);
-            $result[$name][$id] = $pid;
+        $iterator = new RecursiveDirectoryIterator($this->data_dir, RecursiveDirectoryIterator::SKIP_DOTS | RecursiveDirectoryIterator::FOLLOW_SYMLINKS);
+        $iterator = new RecursiveIteratorIterator($iterator);
+        /** @var RecursiveDirectoryIterator $iterator */
+        foreach ($iterator as $file) {
+            $fileName = $file->getFilename();
+            [$name, $id] = explode('_', $fileName, 2);
+            $pid = File::instance()->read($file);
+            $result[$name][$id] = intval($pid);
         }
 
         return $result;
