@@ -28,7 +28,7 @@ class App
      * @param Console $console  执行管理器实例
      * @return void
      */
-    public static function init(Console $console): void
+    public static function init(Console $console)
     {
         // 加载配置
         defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
