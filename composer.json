@@ -22,7 +22,8 @@
         "mongdch/mon-env": "^1.1",
         "mongdch/mon-console": "^1.1",
         "mongdch/mon-util": "^1.3",
-        "workerman/workerman": "^4.1"
+        "workerman/workerman": "^4.1",
+        "mongdch/mon-log": "^1.0"
     },
     "autoload": {
         "psr-4": {

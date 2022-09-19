@@ -14,6 +14,7 @@ use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use gaia\interfaces\ProcessInterface;
 use gaia\interfaces\BootstrapInterface;
+use mon\log\Logger;
 
 /**
  * 进程管理
@@ -209,6 +210,8 @@ class Gaia
         defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
         // 定义时区
         date_default_timezone_set(Config::instance()->get('app.timezone', 'PRC'));
+        // 初始化日志服务
+        Logger::instance()->registerChannel(Config::instance()->get('log', []));
         // 加载自动加载文件列表
         foreach (Config::instance()->get('autoload', []) as $file) {
             include_once $file;
