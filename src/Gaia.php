@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace gaia;
 
 use mon\util\File;
+use mon\log\Logger;
 use mon\env\Config;
 use Workerman\Worker;
 use mon\util\Instance;
@@ -14,7 +15,6 @@ use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use gaia\interfaces\ProcessInterface;
 use gaia\interfaces\BootstrapInterface;
-use mon\log\Logger;
 
 /**
  * 进程管理
@@ -244,12 +244,12 @@ class Gaia
     {
         // 绑定事件回调
         foreach ($this->callback_map as $name) {
-            if (method_exists($handler, $name)) {
+            if (method_exists($handler, $name) && is_callable([$handler, $name])) {
                 $worker->$name = [$handler, $name];
             }
         }
         // 执行workerStart回调
-        if (method_exists($handler, 'onWorkerStart')) {
+        if (method_exists($handler, 'onWorkerStart') && is_callable([$handler, 'onWorkerStart'])) {
             $handler->onWorkerStart($worker);
         }
 
@@ -258,7 +258,7 @@ class Gaia
             // 删除进程信息文件
             WorkerMap::instance()->removeWorkerMap($worker->name, $worker->id);
             // 指定自定义回调
-            if (method_exists($handler, 'onWorkerStop')) {
+            if (method_exists($handler, 'onWorkerStop') && is_callable([$handler, 'onWorkerStop'])) {
                 $handler->onWorkerStop($worker);
             }
         };
