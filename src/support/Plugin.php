@@ -7,7 +7,7 @@ use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
 /**
- * 插件安装驱动，兼容webman插件
+ * 插件安装驱动
  * 
  * @see 修改自webman/plugin
  * @author Mon <985558837@qq.com>
@@ -121,10 +121,8 @@ class Plugin
      */
     protected static function checkPlugin($namespace)
     {
-        $webman = "\\{$namespace}Install::WEBMAN_PLUGIN";
-        $gaia =  "\\{$namespace}Install::GAIA_PLUGIN";
-
-        return defined($webman) || defined($gaia);
+        $gaia = "\\{$namespace}Install::GAIA_PLUGIN";
+        return defined($gaia);
     }
 
     /**
