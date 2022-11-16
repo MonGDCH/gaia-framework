@@ -18,8 +18,26 @@ use mon\console\Command;
  */
 class StopCommand extends Command
 {
+    /**
+     * 指令名
+     *
+     * @var string
+     */
     protected static $defaultName = 'stop';
+
+    /**
+     * 指令描述
+     *
+     * @var string
+     */
     protected static $defaultDescription = 'Stop worker. Use mode -g to stop gracefully.';
+
+    /**
+     * 指令分组
+     *
+     * @var string
+     */
+    protected static $defaultGroup = 'server';
 
     /**
      * 执行指令的接口方法

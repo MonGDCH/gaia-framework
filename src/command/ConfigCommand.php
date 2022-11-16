@@ -17,8 +17,26 @@ use mon\env\Config as Env;
  */
 class ConfigCommand extends Command
 {
+    /**
+     * 指令名
+     *
+     * @var string
+     */
     protected static $defaultName = 'config';
+
+    /**
+     * 指令描述
+     *
+     * @var string
+     */
     protected static $defaultDescription = 'Config utils';
+
+    /**
+     * 指令分组
+     *
+     * @var string
+     */
+    protected static $defaultGroup = 'gaia';
 
     /**
      * 构造方法

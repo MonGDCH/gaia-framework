@@ -17,8 +17,33 @@ use mon\console\Command;
  */
 class VersionCommand extends Command
 {
+    /**
+     * 指令名
+     *
+     * @var string
+     */
     protected static $defaultName = 'version';
+
+    /**
+     * 指令描述
+     *
+     * @var string
+     */
     protected static $defaultDescription = 'Show Gaia Version';
+
+    /**
+     * 指令别名
+     *
+     * @var string
+     */
+    protected static $defaultAliasName = 'v';
+
+    /**
+     * 指令分组
+     *
+     * @var string
+     */
+    protected static $defaultGroup = 'gaia';
 
     /**
      * 执行指令的接口方法

@@ -18,8 +18,26 @@ use mon\console\Command;
  */
 class RestartCommand extends Command
 {
+    /**
+     * 指令名
+     *
+     * @var string
+     */
     protected static $defaultName = 'restart';
+
+    /**
+     * 指令描述
+     *
+     * @var string
+     */
     protected static $defaultDescription = 'Restart workers. Use mode -d to start in DAEMON mode.';
+
+    /**
+     * 指令分组
+     *
+     * @var string
+     */
+    protected static $defaultGroup = 'server';
 
     /**
      * 执行指令的接口方法

@@ -4,19 +4,19 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e765b411284556c8f5b4960079afac72",
+    "content-hash": "2617221cf2ad1aab094408790c6b7dce",
     "packages": [
         {
             "name": "mongdch/mon-console",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-console/1.1.1/mongdch-mon-console-1.1.1.zip",
-                "reference": "9ac01b997c25d0b019fe895c112184056f494304",
+                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-console/1.1.2/mongdch-mon-console-1.1.2.zip",
+                "reference": "8a7b445b4a3e28f3c0e1836b809b44ba64df6370",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0"
+                "php": ">=7.2"
             },
             "type": "library",
             "autoload": {
@@ -39,7 +39,7 @@
                 "console",
                 "mon"
             ],
-            "time": "2022-08-31T07:15:25+00:00"
+            "time": "2022-11-15T09:58:44+00:00"
         },
         {
             "name": "mongdch/mon-env",

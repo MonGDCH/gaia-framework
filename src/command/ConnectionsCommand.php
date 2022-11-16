@@ -17,8 +17,26 @@ use mon\console\Command;
  */
 class ConnectionsCommand extends Command
 {
+    /**
+     * 指令名
+     *
+     * @var string
+     */
     protected static $defaultName = 'connections';
+
+    /**
+     * 指令描述
+     *
+     * @var string
+     */
     protected static $defaultDescription = 'Show worker connections.';
+
+    /**
+     * 指令分组
+     *
+     * @var string
+     */
+    protected static $defaultGroup = 'server';
 
     /**
      * 执行指令的接口方法

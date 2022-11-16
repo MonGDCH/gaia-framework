@@ -17,8 +17,26 @@ use mon\console\Command;
  */
 class StatusCommand extends Command
 {
+    /**
+     * 指令名
+     *
+     * @var string
+     */
     protected static $defaultName = 'status';
+
+    /**
+     * 指令描述
+     *
+     * @var string
+     */
     protected static $defaultDescription = 'Show worker status. Use mode -d to show live status.';
+
+    /**
+     * 指令分组
+     *
+     * @var string
+     */
+    protected static $defaultGroup = 'server';
 
     /**
      * 执行指令的接口方法

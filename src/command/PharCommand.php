@@ -19,8 +19,26 @@ use mon\console\Command;
  */
 class PharCommand extends Command
 {
+    /**
+     * 指令名
+     *
+     * @var string
+     */
     protected static $defaultName = 'phar';
+
+    /**
+     * 指令描述
+     *
+     * @var string
+     */
     protected static $defaultDescription = 'Build packaged a project into phar';
+
+    /**
+     * 指令分组
+     *
+     * @var string
+     */
+    protected static $defaultGroup = 'gaia';
 
     /**
      * 执行指令的接口方法

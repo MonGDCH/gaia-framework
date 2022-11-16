@@ -18,8 +18,26 @@ use mon\console\Command;
  */
 class ReloadCommand extends Command
 {
+    /**
+     * 指令名
+     *
+     * @var string
+     */
     protected static $defaultName = 'reload';
+
+    /**
+     * 指令描述
+     *
+     * @var string
+     */
     protected static $defaultDescription = 'Reload worker. Use -g to reload gracefully. Reload worker name can be specify.';
+
+    /**
+     * 指令分组
+     *
+     * @var string
+     */
+    protected static $defaultGroup = 'server';
 
     /**
      * 执行指令的接口方法
