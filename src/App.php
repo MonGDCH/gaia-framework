@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace gaia;
 
+use mon\log\Logger;
 use mon\env\Config;
 use Workerman\Worker;
 use mon\console\App as Console;
@@ -22,36 +23,63 @@ class App
      * 
      * @var string
      */
-    const VERSION = '1.0.5';
+    const VERSION = '1.0.6';
+
+    /**
+     * 控制台实例
+     *
+     * @var Console
+     */
+    protected static $console = null;
 
     /**
      * 应用初始化
      *
-     * @param Console $console  执行管理器实例
-     * @return void
+     * @return Console
      */
-    public static function init(Console $console)
+    public static function init(): Console
     {
         // 加载配置
         defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
-
+        // 定义时区
+        date_default_timezone_set(Config::instance()->get('app.timezone', 'PRC'));
+        // 初始化日志服务
+        Logger::instance()->registerChannel(Config::instance()->get('log', []));
+        // 绑定控制台实例
+        $console = static::console();
         // 注册workerman配置
         static::initWorker(Config::instance()->get('app.worker', []));
 
         // 设置标题
         $console->setTitle('
-      _______      ___       __       ___              ___      .______   .______   
-     /  _____|    /   \     |  |     /   \            /   \     |   _  \  |   _  \  
-    |  |  __     /  ^  \    |  |    /  ^  \          /  ^  \    |  |_)  | |  |_)  | 
-    |  | |_ |   /  /_\  \   |  |   /  /_\  \        /  /_\  \   |   ___/  |   ___/  
-    |  |__| |  /  _____  \  |  |  /  _____  \      /  _____  \  |  |      |  |      
-     \______| /__/     \__\ |__| /__/     \__\    /__/     \__\ |__|      |__|      
+      _______       ___       __       ___              ___      .______   .______   
+     /  _____|     /   \     |  |     /   \            /   \     |   _  \  |   _  \  
+    |  |   __     /  ^  \    |  |    /  ^  \          /  ^  \    |  |_)  | |  |_)  | 
+    |  |  |_ |   /  /_\  \   |  |   /  /_\  \        /  /_\  \   |   ___/  |   ___/  
+    |  |___| |  /  _____  \  |  |  /  _____  \      /  _____  \  |  |      |  |      
+     \_______| /__/     \__\ |__| /__/     \__\    /__/     \__\ |__|      |__|      
 ');
 
         // 注册指令
         $path = __DIR__ . '/command';
         $namespance = 'gaia\\command';
         $console->load($path, $namespance);
+
+        return $console;
+    }
+
+    /**
+     * 获取控制台实例
+     *
+     * @return Console
+     */
+    public static function console(): Console
+    {
+        if (!static::$console) {
+            static::$console = new Console();
+        }
+
+        return static::$console;
     }
 
     /**

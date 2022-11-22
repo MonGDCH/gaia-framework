@@ -212,10 +212,6 @@ class Gaia
         date_default_timezone_set(Config::instance()->get('app.timezone', 'PRC'));
         // 初始化日志服务
         Logger::instance()->registerChannel(Config::instance()->get('log', []));
-        // 加载自动加载文件列表
-        foreach (Config::instance()->get('autoload', []) as $file) {
-            include_once $file;
-        }
         // 执行初始化钩子
         $bootstraps = Config::instance()->get('bootstrap', []);
         foreach ($bootstraps as $bootstrap) {
