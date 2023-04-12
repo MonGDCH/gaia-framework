@@ -41,6 +41,21 @@ class Install
         $source_path = __DIR__ . DIRECTORY_SEPARATOR;
         foreach (static::$file_relation as $source => $dest) {
             $sourceFile = $source_path . $source;
+            Plugin::copyFile($sourceFile, $dest);
+        }
+    }
+
+    /**
+     * 升级更新
+     *
+     * @return void
+     */
+    public static function update()
+    {
+        // 创建框架文件
+        $source_path = __DIR__ . DIRECTORY_SEPARATOR;
+        foreach (static::$file_relation as $source => $dest) {
+            $sourceFile = $source_path . $source;
             Plugin::copyFile($sourceFile, $dest, true);
         }
     }
