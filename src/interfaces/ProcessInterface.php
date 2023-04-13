@@ -25,4 +25,25 @@ interface ProcessInterface
      * @return array
      */
     public static function getProcessConfig(): array;
+
+    /**
+     * 获取监听的协议scheme
+     *
+     * @return string
+     */
+    public static function getListenScheme(): string;
+
+    /**
+     * 获取协议host
+     *
+     * @return string
+     */
+    public static function getListenHost(): string;
+
+    /**
+     * 获取协议port
+     *
+     * @return integer
+     */
+    public static function getListenPort(): int;
 }
