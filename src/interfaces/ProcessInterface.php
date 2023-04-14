@@ -27,6 +27,13 @@ interface ProcessInterface
     public static function getProcessConfig(): array;
 
     /**
+     * 获取服务监听的协议端口
+     *
+     * @return string
+     */
+    public static function getListen(): string;
+
+    /**
      * 获取监听的协议scheme
      *
      * @return string

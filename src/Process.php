@@ -14,6 +14,8 @@ use gaia\interfaces\ProcessInterface;
  */
 abstract class Process implements ProcessInterface
 {
+    use ProcessTrait;
+
     /**
      * 启用进程
      *
@@ -46,65 +48,5 @@ abstract class Process implements ProcessInterface
     public static function getProcessConfig(): array
     {
         return static::$processConfig;
-    }
-
-    /**
-     * 获取监听的协议scheme
-     *
-     * @return string
-     */
-    public static function getListenScheme(): string
-    {
-        $listen = static::$processConfig['listen'] ?? '';
-        if (empty($listen)) {
-            return '';
-        }
-        $parseListen = explode('://', $listen, 2);
-        if (count($parseListen) != 2) {
-            return '';
-        }
-        return $parseListen[0];
-    }
-
-    /**
-     * 获取协议host
-     *
-     * @return string
-     */
-    public static function getListenHost(): string
-    {
-        $listen = static::$processConfig['listen'] ?? '';
-        if (empty($listen)) {
-            return '';
-        }
-        $parseListen = explode('://', $listen, 2);
-        if (count($parseListen) != 2) {
-            return '';
-        }
-        $parseHost = explode(':', $parseListen[1], 2);
-        return $parseHost[0];
-    }
-
-    /**
-     * 获取协议port
-     *
-     * @return integer
-     */
-    public static function getListenPort(): int
-    {
-        $listen = static::$processConfig['listen'] ?? '';
-        if (empty($listen)) {
-            return null;
-        }
-        $parseListen = explode('://', $listen, 2);
-        if (count($parseListen) != 2) {
-            return null;
-        }
-        $parseHost = explode(':', $parseListen[1], 2);
-        if (count($parseHost) != 2) {
-            return null;
-        }
-
-        return intval($parseHost[1]);
     }
 }
