@@ -302,6 +302,9 @@ if (is_callable('opcache_reset')) {
     opcache_reset();
 }
 
+// 加载配置
+\mon\\env\Config::instance()->loadDir(CONFIG_PATH);
+
 // 创建启动进程
 \gaia\Gaia::instance()->start('$name', $config, $handler);
 
