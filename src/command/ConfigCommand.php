@@ -22,7 +22,7 @@ class ConfigCommand extends Command
      *
      * @var string
      */
-    protected static $defaultName = 'config';
+    protected static $defaultName = 'config:get';
 
     /**
      * 指令描述

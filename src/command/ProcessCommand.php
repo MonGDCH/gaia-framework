@@ -22,7 +22,7 @@ class ProcessCommand extends Command
      *
      * @var string
      */
-    protected static $defaultName = 'process';
+    protected static $defaultName = 'make:process';
 
     /**
      * 指令描述
@@ -30,13 +30,6 @@ class ProcessCommand extends Command
      * @var string
      */
     protected static $defaultDescription = 'Make process file util.';
-
-    /**
-     * 指令别名
-     *
-     * @var string
-     */
-    protected static $defaultAliasName = 'prc';
 
     /**
      * 指令分组
@@ -54,6 +47,7 @@ namespace process;
 
 use gaia\Process;
 use Workerman\Worker;
+use gaia\interfaces\ProcessInterface;
 
 /**
  * %s 进程
@@ -63,7 +57,7 @@ use Workerman\Worker;
  * @copyright Gaia
  * @version 1.0.0 %s
  */
-class %s extends Process
+class %s extends Process implements ProcessInterface
 {
     /**
      * 启用进程
@@ -78,14 +72,14 @@ class %s extends Process
      * @var array
      */
     protected static \$processConfig = [
-        // 监听协议断开
+        // 监听协议端口
         'listen'    => 'text://0.0.0.0:12345',
-        // 通信协议
-        'transport' => 'tcp',
         // 额外参数
         'context'   => [],
         // 进程数
         'count'     => 1,
+        // 通信协议
+        'transport' => 'tcp',
         // 进程用户
         'user'      => '',
         // 进程用户组

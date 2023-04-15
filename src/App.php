@@ -83,6 +83,28 @@ class App
     }
 
     /**
+     * 获取服务器CPU内核数
+     *
+     * @return integer
+     */
+    public static function cpu_count(): int
+    {
+        // Windows 不支持进程数设置
+        if (DIRECTORY_SEPARATOR === '\\') {
+            return 1;
+        }
+        static $count = 0;
+        if ($count == 0 && is_callable('shell_exec')) {
+            if (strtolower(PHP_OS) === 'darwin') {
+                $count = (int)shell_exec('sysctl -n machdep.cpu.core_count');
+            } else {
+                $count = (int)shell_exec('nproc');
+            }
+        }
+        return $count > 0 ? $count : 4;
+    }
+
+    /**
      * 注册workerman配置
      *
      * @param array $config

@@ -24,7 +24,7 @@ class PharCommand extends Command
      *
      * @var string
      */
-    protected static $defaultName = 'phar';
+    protected static $defaultName = 'make:phar';
 
     /**
      * 指令描述
