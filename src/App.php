@@ -23,7 +23,7 @@ class App
      * 
      * @var string
      */
-    const VERSION = '1.0.8';
+    const VERSION = '1.0.9';
 
     /**
      * 控制台实例
@@ -87,7 +87,7 @@ class App
      *
      * @return integer
      */
-    public static function cpu_count(): int
+    public static function cpuCount(): int
     {
         // Windows 不支持进程数设置
         if (DIRECTORY_SEPARATOR === '\\') {
