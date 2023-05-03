@@ -59,7 +59,7 @@ class PublishCommand extends Command
         if (is_callable($callback)) {
             $callback();
         } else {
-            return $out->error('The package [' . $plugin . '] not support Gaia!');
+            return $out->error('The package [' . $plugin . '] not support Gaia Publish!');
         }
 
         return $out->block('Publish ' . $vendor);
