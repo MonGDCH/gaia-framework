@@ -7,7 +7,6 @@ namespace gaia\command;
 use mon\console\Input;
 use mon\console\Output;
 use mon\console\Command;
-use mon\env\Config as Configuration;
 
 /**
  * 查看配置
@@ -15,21 +14,21 @@ use mon\env\Config as Configuration;
  * @author Mon <98555883@qq.com>
  * @version 1.0.0
  */
-class ConfigCommand extends Command
+class PublishCommand extends Command
 {
     /**
      * 指令名
      *
      * @var string
      */
-    protected static $defaultName = 'config:get';
+    protected static $defaultName = 'vendor:publish';
 
     /**
      * 指令描述
      *
      * @var string
      */
-    protected static $defaultDescription = 'Config utils';
+    protected static $defaultDescription = 'Publish vendor plugins.';
 
     /**
      * 指令分组
@@ -47,21 +46,22 @@ class ConfigCommand extends Command
      */
     public function execute(Input $in, Output $out)
     {
-        // 获取查看的节点
         $args = $in->getArgs();
-        $action = $args[0] ?? '';
-        $out->write('');
-        $config = Configuration::instance()->get($action, []);
-
-
-        if (!empty($action)) {
-            return $out->dataList((array)$config, $action, false, ['ucFirst' => false]);
-        } else {
-            foreach ($config as $title => $value) {
-                $out->dataList($value, $title, false, ['ucFirst' => false]);
-            }
-
-            return 0;
+        if (empty($args)) {
+            return $out->error('Please enter package namespace.');
         }
+        $vendor = $args[0];
+        $plugin = "\\{$vendor}\\Install";
+        if (!defined($plugin . '::GAIA_PLUGIN')) {
+            return $out->error('The package not support Gaia!');
+        }
+        $callback = $plugin . '::publish';
+        if (is_callable($callback)) {
+            $callback();
+        } else {
+            return $out->error('The package [' . $plugin . '] not support Gaia!');
+        }
+
+        return $out->block('Publish ' . $vendor);
     }
 }

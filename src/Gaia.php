@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace gaia;
 
+use mon\env\Env;
 use mon\util\File;
-use mon\log\Logger;
 use mon\env\Config;
+use mon\log\Logger;
 use Workerman\Worker;
 use mon\util\Instance;
 use mon\util\Container;
@@ -207,6 +208,7 @@ class Gaia
     protected function bootstrap(Worker $worker)
     {
         // 加载配置文件
+        defined('ENV_PATH') && file_exists(ENV_PATH) && Env::load(ENV_PATH);
         defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
         // 定义时区
         date_default_timezone_set(Config::instance()->get('app.timezone', 'PRC'));
@@ -303,6 +305,7 @@ if (is_callable('opcache_reset')) {
 }
 
 // 加载配置
+file_exists(ENV_PATH) && \mon\\env\Env::load(ENV_PATH);
 \mon\\env\Config::instance()->loadDir(CONFIG_PATH);
 
 // 创建启动进程
