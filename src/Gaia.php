@@ -78,9 +78,10 @@ class Gaia
      *
      * @param string $path  进程加载文件路径
      * @param string $namespace 命名空间
+     * @param boolean $monitor  是否启动监听进程
      * @return void
      */
-    public function run(string $path = '', string $namespace = '\process')
+    public function run(string $path = '', string $namespace = '\process', bool $monitor = true)
     {
         // 初始化worker-map
         WorkerMap::instance()->init();
@@ -123,11 +124,15 @@ class Gaia
         $name = 'monitor';
         if (DIRECTORY_SEPARATOR === '/') {
             // linux环境
-            $this->start($name, Monitor::getProcessConfig(), Monitor::class);
+            if ($monitor) {
+                $this->start($name, Monitor::getProcessConfig(), Monitor::class);
+            }
             Worker::runAll();
         } else {
             // windows环境
-            $process_files[] = $this->createProcessFile($name, Monitor::class, $name);
+            if ($monitor) {
+                $process_files[] = $this->createProcessFile($name, Monitor::class, $name);
+            }
             $this->runWin($process_files);
         }
     }
@@ -140,6 +145,9 @@ class Gaia
      */
     public function runWin(array $files)
     {
+        $startFile = $this->createWinStartFile();
+        array_unshift($files, $startFile);
+
         $resource = $this->open_process($files);
         // windows环境需要重新创建监听服务
         $monitor = new Monitor();
@@ -270,9 +278,10 @@ class Gaia
      */
     public function open_process(array $files)
     {
-        $cmd = PHP_BINARY . ' ' . implode(' ', $files);
+
+        $cmd = '"' . PHP_BINARY . '" ' . implode(' ', $files);
         $descriptorspec = [STDIN, STDOUT, STDOUT];
-        $resource = proc_open($cmd, $descriptorspec, $pipes);
+        $resource = proc_open($cmd, $descriptorspec, $pipes, null, null, ['bypass_shell' => true]);
         if (!$resource) {
             exit("Can not execute $cmd\r\n");
         }
@@ -304,9 +313,8 @@ if (is_callable('opcache_reset')) {
     opcache_reset();
 }
 
-// 加载配置
-file_exists(ENV_PATH) && \mon\\env\Env::load(ENV_PATH);
-\mon\\env\Config::instance()->loadDir(CONFIG_PATH);
+// Gaia初始化
+\Gaia\App::initialize();
 
 // 创建启动进程
 \gaia\Gaia::instance()->start('$name', $config, $handler);
@@ -318,6 +326,39 @@ EOF;
 
         $saveName = $saveName ?: $name;
         $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/start_' . $saveName . '.php';
+        File::instance()->createFile($tmp, $fileName, false);
+        return $fileName;
+    }
+
+    /**
+     * 创建windows环境下启动文件
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function createWinStartFile(string $name = 'start'): string
+    {
+        $tmp = <<<EOF
+<?php
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+// 打开错误提示
+ini_set('display_errors', 'on');
+error_reporting(E_ALL);
+
+// 重置opcache
+if (is_callable('opcache_reset')) {
+    opcache_reset();
+}
+
+// Gaia初始化
+\Gaia\App::initialize();
+
+// 启动程序
+\Workerman\Worker::runAll();
+        
+EOF;
+        $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . '/windows/' . $name . '.php';
         File::instance()->createFile($tmp, $fileName, false);
         return $fileName;
     }

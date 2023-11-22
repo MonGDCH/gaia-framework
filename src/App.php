@@ -44,9 +44,6 @@ class App
         static::initialize();
         // 获取控制台实例
         $console = static::console();
-        // 注册workerman配置
-        static::initWorker(Config::instance()->get('app.worker', []));
-
         // 设置标题
         $console->setTitle('
       _______       ___       __       ___              ___      .______   .______   
@@ -79,6 +76,8 @@ class App
         date_default_timezone_set(Config::instance()->get('app.timezone', 'PRC'));
         // 初始化日志服务
         Logger::instance()->registerChannel(Config::instance()->get('log', []));
+        // 注册workerman配置
+        static::initWorker(Config::instance()->get('app.worker', []));
     }
 
     /**

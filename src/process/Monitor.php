@@ -6,9 +6,11 @@ namespace gaia\process;
 
 use SplFileInfo;
 use gaia\Process;
+use mon\util\File;
 use mon\env\Config;
 use Workerman\Timer;
 use Workerman\Worker;
+use mon\util\Instance;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
@@ -21,6 +23,8 @@ use RecursiveDirectoryIterator;
  */
 class Monitor extends Process
 {
+    use Instance;
+
     /**
      * 进程配置
      *
@@ -46,6 +50,13 @@ class Monitor extends Process
     protected $_extensions = [];
 
     /**
+     * 暂停监听锁文件
+     *
+     * @var string
+     */
+    protected $_lock = '';
+
+    /**
      * 构造方法
      */
     public function __construct()
@@ -58,6 +69,41 @@ class Monitor extends Process
 
         $this->_paths = Config::instance()->get('app.monitor.paths', []);
         $this->_extensions = Config::instance()->get('app.monitor.exts', []);
+        $this->_lock = Config::instance()->get('app.monitor.lock', RUNTIME_PATH . '/monitor.lock');
+    }
+
+    /**
+     * 暂停扫描
+     *
+     * @return void
+     */
+    public function pause()
+    {
+        File::instance()->createFile(time(), $this->_lock, false);
+    }
+
+    /**
+     * 重新开始扫描
+     *
+     * @return void
+     */
+    public function resume()
+    {
+        clearstatcache();
+        if (is_file($this->_lock)) {
+            unlink($this->_lock);
+        }
+    }
+
+    /**
+     * 是否暂停扫描
+     *
+     * @return boolean
+     */
+    public function isPaused(): bool
+    {
+        clearstatcache();
+        return file_exists($this->_lock);
     }
 
     /**
@@ -88,6 +134,9 @@ class Monitor extends Process
      */
     public function checkAllFilesChange(): bool
     {
+        if ($this->isPaused()) {
+            return false;
+        }
         foreach ($this->_paths as $path) {
             if ($this->checkFilesChange($path)) {
                 return true;
@@ -159,6 +208,9 @@ class Monitor extends Process
      */
     public function checkMemory(int $memory_limit)
     {
+        if ($this->isPaused() || $memory_limit <= 0) {
+            return;
+        }
         $ppid = posix_getppid();
         $children_file = "/proc/$ppid/task/$ppid/children";
         if (!is_file($children_file) || !($children = file_get_contents($children_file))) {
