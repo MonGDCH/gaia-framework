@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace gaia\process;
 
+use gaia\App;
 use SplFileInfo;
 use gaia\Process;
 use mon\util\File;
@@ -121,7 +122,7 @@ class Monitor extends Process
             });
         }
         // linux环境，监听系统内存
-        if (DIRECTORY_SEPARATOR === '/') {
+        if (!App::isWindows()) {
             $memory_limit = $this->getMemoryLimit();
             Timer::add(60, [$this, 'checkMemory'], [$memory_limit]);
         }
@@ -186,7 +187,7 @@ class Monitor extends Process
                 $last_mtime = $file->getMTime();
                 echo $file . " update and reload\n";
                 // linux环境，向主进程发送SIGUSR1信号，重新加载程序
-                if (DIRECTORY_SEPARATOR === '/') {
+                if (!App::isWindows()) {
                     posix_kill(posix_getppid(), SIGUSR1);
                 } else {
                     return true;

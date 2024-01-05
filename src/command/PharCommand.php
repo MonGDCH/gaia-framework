@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace gaia\command;
 
 use Phar;
+use gaia\App;
 use mon\util\File;
 use mon\env\Config;
 use mon\console\Input;
@@ -49,7 +50,7 @@ class PharCommand extends Command
      */
     public function execute(Input $input, Output $output)
     {
-        if (DIRECTORY_SEPARATOR !== '/') {
+        if (App::isWindows()) {
             return $output->error('The `' . self::$defaultName . '` command command for windows env not supported!');
         }
         // 是否启用phar扩展

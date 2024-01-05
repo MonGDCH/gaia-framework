@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace gaia\command;
 
+use gaia\App;
 use gaia\Gaia;
 use mon\console\Input;
 use mon\console\Output;
@@ -47,7 +48,7 @@ class StatusCommand extends Command
      */
     public function execute(Input $input, Output $output)
     {
-        if (DIRECTORY_SEPARATOR !== '/') {
+        if (App::isWindows()) {
             return $output->error('The `' . self::$defaultName . '` command for windows env not supported!');
         }
         Gaia::instance()->run();

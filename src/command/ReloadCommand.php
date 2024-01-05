@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace gaia\command;
 
+use gaia\App;
 use gaia\Gaia;
 use gaia\WorkerMap;
 use mon\console\Input;
@@ -48,7 +49,7 @@ class ReloadCommand extends Command
      */
     public function execute(Input $input, Output $output)
     {
-        if (DIRECTORY_SEPARATOR !== '/') {
+        if (App::isWindows()) {
             return $output->error('The `' . self::$defaultName . '` command for windows env not supported!');
         }
         $process = $input->getArgs();

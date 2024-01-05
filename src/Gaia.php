@@ -67,8 +67,6 @@ class Gaia
         'onBufferFull',
         // 应用层发送缓冲区数据全部发送完成时
         'onBufferDrain',
-        // 进程关闭时
-        // 'onWorkerStop',
         // websocket链接时
         'onWebSocketConnect'
     ];
@@ -111,7 +109,7 @@ class Gaia
             $name = strtolower(ltrim($name, '.'));
 
             // 运行
-            if (DIRECTORY_SEPARATOR === '/') {
+            if (!App::isWindows()) {
                 // linux环境
                 $this->start($name, $config, $className);
             } else {
@@ -122,7 +120,7 @@ class Gaia
         }
         // 运行内置monitor进程，启动进程
         $name = 'monitor';
-        if (DIRECTORY_SEPARATOR === '/') {
+        if (!App::isWindows()) {
             // linux环境
             if ($monitor) {
                 $this->start($name, Monitor::getProcessConfig(), Monitor::class);
@@ -145,8 +143,11 @@ class Gaia
      */
     public function runWin(array $files)
     {
-        $startFile = $this->createWinStartFile();
-        array_unshift($files, $startFile);
+        // 兼容处理windows下start服务重启问题
+        if (defined('COMPATIBLE_MOD') && COMPATIBLE_MOD) {
+            $startFile = $this->createWinStartFile();
+            array_unshift($files, $startFile);
+        }
 
         $resource = $this->open_process($files);
         // windows环境需要重新创建监听服务
@@ -189,7 +190,7 @@ class Gaia
             $this->bootstrap($worker);
 
             // 记录worker信息
-            if (DIRECTORY_SEPARATOR === '/') {
+            if (!App::isWindows()) {
                 WorkerMap::instance()->setWorkerMap($worker->name, $worker->id, posix_getpid());
             }
 
@@ -302,6 +303,7 @@ class Gaia
         $handler = "$handlerName::class";
         $tmp = <<<EOF
 <?php
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 // 打开错误提示
@@ -314,7 +316,7 @@ if (is_callable('opcache_reset')) {
 }
 
 // Gaia初始化
-\Gaia\App::initialize();
+\gaia\App::initialize();
 
 // 创建启动进程
 \gaia\Gaia::instance()->start('$name', $config, $handler);
@@ -340,6 +342,7 @@ EOF;
     {
         $tmp = <<<EOF
 <?php
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 // 打开错误提示
@@ -352,7 +355,7 @@ if (is_callable('opcache_reset')) {
 }
 
 // Gaia初始化
-\Gaia\App::initialize();
+\gaia\App::initialize();
 
 // 启动程序
 \Workerman\Worker::runAll();

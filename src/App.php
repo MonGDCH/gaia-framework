@@ -15,7 +15,7 @@ use Workerman\Connection\TcpConnection;
  * 初始化gaia
  * 
  * @author Mon <985558837@qq.com>
- * @version 1.1.10
+ * @version 1.1.2
  */
 class App
 {
@@ -24,7 +24,7 @@ class App
      * 
      * @var string
      */
-    const VERSION = '1.1.0';
+    const VERSION = '1.1.2';
 
     /**
      * 控制台实例
@@ -92,12 +92,12 @@ class App
         TcpConnection::$defaultMaxPackageSize = $config['max_package_size'] ?? 10 * 1024 * 1024;
         // 存储主进程PID的文件
         Worker::$pidFile = $config['pid_file'] ?? RUNTIME_PATH . '/gaia.pid';
-        // 存储标准输出的文件，默认 /dev/null。daemonize运行模式下echo的内容才会记录到文件中
-        Worker::$stdoutFile = $config['log_file'] ?? RUNTIME_PATH . '/stdout.log';
+        // 存储关闭服务标准输出的文件，默认 /dev/null。daemonize运行模式下echo的内容才会记录到文件中
+        Worker::$stdoutFile = $config['stdout_file'] ?? RUNTIME_PATH . '/stdout.log';
         // workerman日志记录文件
-        Worker::$logFile = $config['status_file'] ?? RUNTIME_PATH . '/workerman.log';
+        Worker::$logFile = $config['log_file'] ?? RUNTIME_PATH . '/workerman.log';
         // 存储主进程状态信息的文件，运行 status 指令后，内容会写入该文件
-        Worker::$statusFile = RUNTIME_PATH . '/gaia.status';
+        Worker::$statusFile = $config['status_file'] ??  RUNTIME_PATH . '/gaia.status';
         // workerman事件循环使用对象，默认 \Workerman\Events\Select。一般不需要修改，空则可以
         Worker::$eventLoopClass = $config['event_loop_class'] ?? '';
         // 发送停止命令后，多少秒内程序没有停止，则强制停止
@@ -130,6 +130,16 @@ class App
     }
 
     /**
+     * 当前环境是否未windows运行环境
+     *
+     * @return boolean
+     */
+    public static function isWindows(): bool
+    {
+        return DIRECTORY_SEPARATOR === '\\';
+    }
+
+    /**
      * 获取服务器CPU内核数
      *
      * @return integer
@@ -137,7 +147,7 @@ class App
     public static function cpuCount(): int
     {
         // Windows 不支持进程数设置
-        if (DIRECTORY_SEPARATOR === '\\') {
+        if (self::isWindows()) {
             return 1;
         }
         static $count = 0;
