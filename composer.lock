@@ -11,7 +11,7 @@
             "version": "1.1.2",
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-console/1.1.2/mongdch-mon-console-1.1.2.zip",
+                "url": "https://mirrors.tencent.com/repository/composer/mongdch/mon-console/1.1.2/mongdch-mon-console-1.1.2.zip",
                 "reference": "8a7b445b4a3e28f3c0e1836b809b44ba64df6370",
                 "shasum": ""
             },
@@ -46,7 +46,7 @@
             "version": "1.1.2",
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-env/1.1.2/mongdch-mon-env-1.1.2.zip",
+                "url": "https://mirrors.tencent.com/repository/composer/mongdch/mon-env/1.1.2/mongdch-mon-env-1.1.2.zip",
                 "reference": "0aa7e2a48f5738048b222015e6f82593d850964f",
                 "shasum": ""
             },
@@ -80,7 +80,7 @@
             "version": "1.0.5",
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-log/1.0.5/mongdch-mon-log-1.0.5.zip",
+                "url": "https://mirrors.tencent.com/repository/composer/mongdch/mon-log/1.0.5/mongdch-mon-log-1.0.5.zip",
                 "reference": "93d3be10ccddce69602e7df103db163427454aaa",
                 "shasum": ""
             },
@@ -116,15 +116,15 @@
         },
         {
             "name": "mongdch/mon-util",
-            "version": "1.4.10",
+            "version": "1.5.0",
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-util/1.4.10/mongdch-mon-util-1.4.10.zip",
-                "reference": "fb4fad01e79b501b58ecacd13b76e7f8c2589a65",
+                "url": "https://mirrors.tencent.com/repository/composer/mongdch/mon-util/1.5.0/mongdch-mon-util-1.5.0.zip",
+                "reference": "4cefba1941318734e4dd838286d5628a93838e93",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6.0",
+                "php": ">=7.2.0",
                 "psr/container": "1.0.0"
             },
             "type": "library",
@@ -154,14 +154,14 @@
                 "tool",
                 "util"
             ],
-            "time": "2023-12-13T09:20:28+00:00"
+            "time": "2024-01-18T01:55:21+00:00"
         },
         {
             "name": "psr/container",
             "version": "1.0.0",
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/psr/container/1.0.0/psr-container-1.0.0.zip",
+                "url": "https://mirrors.tencent.com/repository/composer/psr/container/1.0.0/psr-container-1.0.0.zip",
                 "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
                 "shasum": ""
             },
@@ -204,7 +204,7 @@
             "version": "1.1.4",
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/psr/log/1.1.4/psr-log-1.1.4.zip",
+                "url": "https://mirrors.tencent.com/repository/composer/psr/log/1.1.4/psr-log-1.1.4.zip",
                 "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
                 "shasum": ""
             },
@@ -245,7 +245,7 @@
             "version": "v4.1.14",
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.cloud.tencent.com/repository/composer/workerman/workerman/v4.1.14/workerman-workerman-v4.1.14.zip",
+                "url": "https://mirrors.tencent.com/repository/composer/workerman/workerman/v4.1.14/workerman-workerman-v4.1.14.zip",
                 "reference": "f7c9667c7b5387c01fa9e50ee79ed931e93ee76e",
                 "shasum": ""
             },
