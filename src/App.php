@@ -7,6 +7,7 @@ namespace gaia;
 use mon\env\Env;
 use mon\env\Config;
 use mon\log\Logger;
+use mon\util\Event;
 use Workerman\Worker;
 use mon\console\App as Console;
 use Workerman\Connection\TcpConnection;
@@ -59,6 +60,9 @@ class App
         $namespance = 'gaia\\command';
         $console->load($path, $namespance);
 
+        // 应用初始化钩子
+        Event::instance()->trigger('app_init', $console);
+
         return $console;
     }
 
@@ -78,6 +82,8 @@ class App
         Logger::instance()->registerChannel(Config::instance()->get('log', []));
         // 注册workerman配置
         static::initWorker(Config::instance()->get('app.worker', []));
+        // 预定义应用钩子
+        Event::instance()->register(Config::instance()->get('app.tags', []));
     }
 
     /**

@@ -6,6 +6,7 @@ namespace gaia;
 
 use mon\env\Env;
 use mon\util\File;
+use mon\util\Event;
 use mon\env\Config;
 use mon\log\Logger;
 use Workerman\Worker;
@@ -15,7 +16,6 @@ use gaia\process\Monitor;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use gaia\interfaces\ProcessInterface;
-use gaia\interfaces\BootstrapInterface;
 
 /**
  * 进程管理
@@ -81,6 +81,8 @@ class Gaia
      */
     public function run(string $path = '', string $namespace = '\process', bool $monitor = true)
     {
+        // 应用运行钩子
+        Event::instance()->trigger('app_run', $path, $namespace, $monitor);
         // 初始化worker-map
         WorkerMap::instance()->init();
         // 加载进程
@@ -111,7 +113,7 @@ class Gaia
             // 运行
             if (!App::isWindows()) {
                 // linux环境
-                $this->start($name, $config, $className);
+                $this->bootstrap($name, $config, $className);
             } else {
                 // windows环境
                 $saveName = str_replace('.', '_', $name);
@@ -123,7 +125,7 @@ class Gaia
         if (!App::isWindows()) {
             // linux环境
             if ($monitor) {
-                $this->start($name, Monitor::getProcessConfig(), Monitor::class);
+                $this->bootstrap($name, Monitor::getProcessConfig(), Monitor::class);
             }
             Worker::runAll();
         } else {
@@ -173,8 +175,10 @@ class Gaia
      * @param string $handler   业务回调对象名，优先使用config中的handler
      * @return void
      */
-    public function start(string $name, array $config, string $handler = '')
+    public function bootstrap(string $name, array $config, string $handler = '')
     {
+        // 进程启动钩子
+        Event::instance()->trigger('process_bootstrap', $name, $config);
         // 创建worker
         $worker = new Worker($config['listen'] ?? null, $config['context'] ?? []);
         // 定义worker
@@ -187,12 +191,7 @@ class Gaia
         // 进程启动
         $worker->onWorkerStart = function ($worker) use ($config, $handler) {
             // 执行自定义全局workerStart初始化业务
-            $this->bootstrap($worker);
-
-            // 记录worker信息
-            if (!App::isWindows()) {
-                WorkerMap::instance()->setWorkerMap($worker->name, $worker->id, posix_getpid());
-            }
+            $this->start($worker);
 
             // 绑定业务回调
             $handler = $config['handler'] ?? $handler;
@@ -214,7 +213,7 @@ class Gaia
      * @param Worker $worker
      * @return void
      */
-    protected function bootstrap(Worker $worker)
+    protected function start(Worker $worker)
     {
         // 加载配置文件
         defined('ENV_PATH') && file_exists(ENV_PATH) && Env::load(ENV_PATH);
@@ -224,19 +223,11 @@ class Gaia
         // 初始化日志服务
         Logger::instance()->registerChannel(Config::instance()->get('log', []));
         // 执行初始化钩子
-        $bootstraps = Config::instance()->get('bootstrap', []);
-        foreach ($bootstraps as $bootstrap) {
-            if (!class_exists($bootstrap)) {
-                echo "Warning: Class $bootstrap setting in config/bootstrap.php not found\r\n";
-                continue;
-            }
-            if (!is_subclass_of($bootstrap, BootstrapInterface::class)) {
-                echo "Warning: Class $bootstrap not implements " . BootstrapInterface::class . "\r\n";
-                continue;
-            }
+        Event::instance()->trigger('process_start', $worker);
 
-            /** @var BootstrapInterface $bootstrap */
-            $bootstrap::start($worker);
+        // 记录worker信息
+        if (!App::isWindows()) {
+            WorkerMap::instance()->setWorkerMap($worker->name, $worker->id, posix_getpid());
         }
     }
 
@@ -279,7 +270,6 @@ class Gaia
      */
     public function open_process(array $files)
     {
-
         $cmd = '"' . PHP_BINARY . '" ' . implode(' ', $files);
         $descriptorspec = [STDIN, STDOUT, STDOUT];
         $resource = proc_open($cmd, $descriptorspec, $pipes, null, null, ['bypass_shell' => true]);
@@ -319,7 +309,7 @@ if (is_callable('opcache_reset')) {
 \gaia\App::initialize();
 
 // 创建启动进程
-\gaia\Gaia::instance()->start('$name', $config, $handler);
+\gaia\Gaia::instance()->bootstrap('$name', $config, $handler);
 
 // 启动程序
 \Workerman\Worker::runAll();

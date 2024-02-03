@@ -11,7 +11,6 @@ use mon\util\File;
 use mon\env\Config;
 use Workerman\Timer;
 use Workerman\Worker;
-use mon\util\Instance;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
@@ -24,8 +23,6 @@ use RecursiveDirectoryIterator;
  */
 class Monitor extends Process
 {
-    use Instance;
-
     /**
      * 进程配置
      *
@@ -55,7 +52,7 @@ class Monitor extends Process
      *
      * @var string
      */
-    protected $_lock = '';
+    protected static $_lock = '';
 
     /**
      * 构造方法
@@ -70,7 +67,7 @@ class Monitor extends Process
 
         $this->_paths = Config::instance()->get('app.monitor.paths', []);
         $this->_extensions = Config::instance()->get('app.monitor.exts', []);
-        $this->_lock = Config::instance()->get('app.monitor.lock', RUNTIME_PATH . '/monitor.lock');
+        self::$_lock = Config::instance()->get('app.monitor.lock', RUNTIME_PATH . '/monitor.lock');
     }
 
     /**
@@ -78,9 +75,9 @@ class Monitor extends Process
      *
      * @return void
      */
-    public function pause()
+    public static function pause()
     {
-        File::instance()->createFile(time(), $this->_lock, false);
+        File::instance()->createFile(time(), static::$_lock, false);
     }
 
     /**
@@ -88,11 +85,11 @@ class Monitor extends Process
      *
      * @return void
      */
-    public function resume()
+    public static function resume()
     {
         clearstatcache();
-        if (is_file($this->_lock)) {
-            unlink($this->_lock);
+        if (is_file(static::$_lock)) {
+            unlink(static::$_lock);
         }
     }
 
@@ -101,10 +98,10 @@ class Monitor extends Process
      *
      * @return boolean
      */
-    public function isPaused(): bool
+    public static function isPaused(): bool
     {
         clearstatcache();
-        return file_exists($this->_lock);
+        return file_exists(static::$_lock);
     }
 
     /**
@@ -135,7 +132,7 @@ class Monitor extends Process
      */
     public function checkAllFilesChange(): bool
     {
-        if ($this->isPaused()) {
+        if (static::isPaused()) {
             return false;
         }
         foreach ($this->_paths as $path) {
@@ -209,7 +206,7 @@ class Monitor extends Process
      */
     public function checkMemory(int $memory_limit)
     {
-        if ($this->isPaused() || $memory_limit <= 0) {
+        if (static::isPaused() || $memory_limit <= 0) {
             return;
         }
         $ppid = posix_getppid();
