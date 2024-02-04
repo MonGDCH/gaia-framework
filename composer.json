@@ -23,7 +23,7 @@
         "mongdch/mon-env": "^1.1",
         "mongdch/mon-log": "^1.0",
         "mongdch/mon-console": "^1.1",
-        "mongdch/mon-util": "dev-master"
+        "mongdch/mon-util": "^1.5"
     },
     "autoload": {
         "psr-4": {

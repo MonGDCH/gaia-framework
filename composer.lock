@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "242dde5b294ec4cc3d0fabd3c8afb8c8",
+    "content-hash": "c3e21ee7619fef9c2d0d188f656816d6",
     "packages": [
         {
             "name": "mongdch/mon-console",
@@ -146,23 +146,22 @@
         },
         {
             "name": "mongdch/mon-util",
-            "version": "dev-master",
+            "version": "1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MonGDCH/mon-util.git",
-                "reference": "fc38128a257781817ce128f690e313bcb196a3ff"
+                "reference": "5b22a5e923e5f99cce86119b4d6aedf55f3a7d57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MonGDCH/mon-util/zipball/fc38128a257781817ce128f690e313bcb196a3ff",
-                "reference": "fc38128a257781817ce128f690e313bcb196a3ff",
+                "url": "https://api.github.com/repos/MonGDCH/mon-util/zipball/5b22a5e923e5f99cce86119b4d6aedf55f3a7d57",
+                "reference": "5b22a5e923e5f99cce86119b4d6aedf55f3a7d57",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.0",
                 "psr/container": "1.0.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -193,9 +192,9 @@
             ],
             "support": {
                 "issues": "https://github.com/MonGDCH/mon-util/issues",
-                "source": "https://github.com/MonGDCH/mon-util/tree/master"
+                "source": "https://github.com/MonGDCH/mon-util/tree/1.5.2"
             },
-            "time": "2024-02-04T03:09:54+00:00"
+            "time": "2024-02-04T07:43:52+00:00"
         },
         {
             "name": "psr/container",
@@ -367,9 +366,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mongdch/mon-util": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
