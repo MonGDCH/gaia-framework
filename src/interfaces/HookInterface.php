@@ -10,7 +10,7 @@ namespace gaia\interfaces;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-interface EventInterface
+interface HookInterface
 {
     /**
      * 钩子回调处理接口
