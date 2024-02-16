@@ -178,7 +178,7 @@ class Gaia
     public function bootstrap(string $name, array $config, string $handler = '')
     {
         // 进程启动钩子
-        Event::instance()->trigger('process_bootstrap', $name, $config);
+        Event::instance()->trigger('process_init', $name, $config);
         // 创建worker
         $worker = new Worker($config['listen'] ?? null, $config['context'] ?? []);
         // 定义worker
