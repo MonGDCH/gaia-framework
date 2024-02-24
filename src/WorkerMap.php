@@ -133,7 +133,7 @@ class WorkerMap
         $iterator = new RecursiveIteratorIterator($iterator);
         /** @var RecursiveDirectoryIterator $iterator */
         foreach ($iterator as $file) {
-            File::instance()->removeFile($file);
+            File::instance()->removeFile((string)$file);
         }
 
         return true;
@@ -153,7 +153,7 @@ class WorkerMap
         foreach ($iterator as $file) {
             $fileName = $file->getFilename();
             [$name, $id] = explode('_', $fileName, 2);
-            $pid = File::instance()->read($file);
+            $pid = File::instance()->read((string)$file);
             $result[$name][$id] = intval($pid);
         }
 
