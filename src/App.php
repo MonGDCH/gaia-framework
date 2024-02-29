@@ -25,7 +25,7 @@ class App
      * 
      * @var string
      */
-    const VERSION = '1.1.5';
+    const VERSION = '1.1.7';
 
     /**
      * 控制台实例

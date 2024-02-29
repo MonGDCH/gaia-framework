@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace gaia;
 
 /**
@@ -58,15 +60,15 @@ trait ProcessTrait
     {
         $listen = static::getListen();
         if (empty($listen)) {
-            return '';
+            return -1;
         }
         $parseListen = explode('://', $listen, 2);
         if (count($parseListen) != 2) {
-            return null;
+            return -1;
         }
         $parseHost = explode(':', $parseListen[1], 2);
         if (count($parseHost) != 2) {
-            return null;
+            return -1;
         }
 
         return intval($parseHost[1]);

@@ -22,10 +22,9 @@ interface PluginInterface
     /**
      * 注册插件
      *
-     * @param array $options 注册参数
      * @return void
      */
-    public static function register(array $options = []);
+    public static function register();
 
     /**
      * 安装插件
