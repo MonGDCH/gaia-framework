@@ -308,6 +308,9 @@ if (is_callable('opcache_reset')) {
 // Gaia初始化
 \gaia\App::initialize();
 
+// Gaia插件注册
+\support\Plugin::register();
+
 // 创建启动进程
 \gaia\Gaia::instance()->bootstrap('$name', $config, $handler);
 
