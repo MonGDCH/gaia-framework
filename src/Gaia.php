@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace gaia;
 
+use ErrorException;
 use mon\env\Env;
 use mon\util\File;
 use mon\util\Event;
@@ -215,6 +216,21 @@ class Gaia
      */
     protected function start(Worker $worker)
     {
+        // 接管进程错误管理
+        set_error_handler(function (int $level, string $errstr, string $errfile = '', int $errline = 0) use ($worker) {
+            if (error_reporting() & $level) {
+                // 执行错误业务钩子
+                Event::instance()->trigger('process_error', [
+                    'worker' => $worker,
+                    'message' => $errstr,
+                    'file' => $errfile,
+                    'line' => $errline,
+                    'level' => $level
+                ]);
+                // 抛出异常
+                throw new ErrorException($errstr, 0, $level, $errfile, $errline);
+            }
+        });
         // 加载配置文件
         defined('ENV_PATH') && file_exists(ENV_PATH) && Env::load(ENV_PATH);
         defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
