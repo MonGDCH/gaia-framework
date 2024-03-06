@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace gaia;
 
-use ErrorException;
+use Throwable;
 use mon\env\Env;
 use mon\util\File;
 use mon\util\Event;
@@ -191,19 +191,23 @@ class Gaia
         }
         // 进程启动
         $worker->onWorkerStart = function ($worker) use ($config, $handler) {
-            // 执行自定义全局workerStart初始化业务
-            $this->start($worker);
+            try {
+                // 执行自定义全局workerStart初始化业务
+                $this->start($worker);
+                // 绑定业务回调
+                $handler = $config['handler'] ?? $handler;
+                if ($handler) {
+                    if (!class_exists($handler)) {
+                        echo "process error: class {$handler} not exists\r\n";
+                        return;
+                    }
 
-            // 绑定业务回调
-            $handler = $config['handler'] ?? $handler;
-            if ($handler) {
-                if (!class_exists($handler)) {
-                    echo "process error: class {$handler} not exists\r\n";
-                    return;
+                    $instance = Container::instance()->make($handler, $config['constructor'] ?? []);
+                    $this->bindWorker($worker, $instance);
                 }
-
-                $instance = Container::instance()->make($handler, $config['constructor'] ?? []);
-                $this->bindWorker($worker, $instance);
+            } catch (Throwable $e) {
+                Event::instance()->trigger('process_error', ['worker' => $worker, 'error' => $e]);
+                throw $e;
             }
         };
     }
@@ -216,21 +220,6 @@ class Gaia
      */
     protected function start(Worker $worker)
     {
-        // 接管进程错误管理
-        set_error_handler(function (int $level, string $errstr, string $errfile = '', int $errline = 0) use ($worker) {
-            if (error_reporting() & $level) {
-                // 执行错误业务钩子
-                Event::instance()->trigger('process_error', [
-                    'worker' => $worker,
-                    'message' => $errstr,
-                    'file' => $errfile,
-                    'line' => $errline,
-                    'level' => $level
-                ]);
-                // 抛出异常
-                throw new ErrorException($errstr, 0, $level, $errfile, $errline);
-            }
-        });
         // 加载配置文件
         defined('ENV_PATH') && file_exists(ENV_PATH) && Env::load(ENV_PATH);
         defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
