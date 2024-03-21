@@ -28,7 +28,6 @@ class Install
         'gaia'                  => 'gaia',
         'support/bootstrap.php' => 'support/bootstrap.php',
         'support/Plugin.php'    => 'support/Plugin.php',
-        'config/app.php'        => 'config/app.php',
     ];
 
     /**
