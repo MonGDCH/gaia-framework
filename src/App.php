@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace gaia;
 
 use mon\env\Env;
+use mon\util\File;
 use mon\env\Config;
 use mon\log\Logger;
 use mon\util\Event;
@@ -25,7 +26,14 @@ class App
      * 
      * @var string
      */
-    const VERSION = '1.1.7';
+    const VERSION = '1.1.10';
+
+    /**
+     * 应用名
+     *
+     * @var string
+     */
+    protected static $name = '';
 
     /**
      * 控制台实例
@@ -37,12 +45,14 @@ class App
     /**
      * 应用初始化
      *
+     * @param string $app   应用名
      * @return Console
      */
-    public static function init(): Console
+    public static function init(string $app = ''): Console
     {
         // 初始化配置
-        static::initialize();
+        static::$name = $app;
+        static::initialize($app);
         // 获取控制台实例
         $console = static::console();
         // 设置标题
@@ -61,9 +71,10 @@ class App
     /**
      * 初始化基础配置
      *
+     * @param string $app   应用名
      * @return void
      */
-    public static function initialize()
+    public static function initialize(string $app = '')
     {
         // 加载配置
         defined('ENV_PATH') && file_exists(ENV_PATH) && Env::load(ENV_PATH);
@@ -73,7 +84,7 @@ class App
         // 初始化日志服务
         Logger::instance()->registerChannel(Config::instance()->get('log', []));
         // 注册workerman配置
-        static::initWorker(Config::instance()->get('app.worker', []));
+        static::initWorker(Config::instance()->get('app.worker', []), $app);
         // 预定义应用钩子
         Event::instance()->handler('handler');
         Event::instance()->register(Config::instance()->get('app.hooks', []));
@@ -84,21 +95,24 @@ class App
     /**
      * 注册workerman配置
      *
-     * @param array $config
+     * @param array $config     配置信息
+     * @param string $dirName   workerman生成文件保存目录
      * @return void
      */
-    public static function initWorker(array $config)
+    public static function initWorker(array $config, string $dirName = '')
     {
+        $fileDir = RUNTIME_PATH . '/gaia/workerman/' . ($dirName ? ($dirName . '/') : '');
+        File::instance()->createDir($fileDir);
         // 默认的最大可接受数据包大小
         TcpConnection::$defaultMaxPackageSize = $config['max_package_size'] ?? 10 * 1024 * 1024;
         // 存储主进程PID的文件
-        Worker::$pidFile = $config['pid_file'] ?? RUNTIME_PATH . '/gaia.pid';
+        Worker::$pidFile = $fileDir . ($config['pid_file'] ?? 'gaia.pid');
         // 存储关闭服务标准输出的文件，默认 /dev/null。daemonize运行模式下echo的内容才会记录到文件中
-        Worker::$stdoutFile = $config['stdout_file'] ?? RUNTIME_PATH . '/stdout.log';
+        Worker::$stdoutFile = $fileDir . ($config['stdout_file'] ?? 'stdout.log');
         // workerman日志记录文件
-        Worker::$logFile = $config['log_file'] ?? RUNTIME_PATH . '/workerman.log';
+        Worker::$logFile = $fileDir . ($config['log_file'] ?? 'workerman.log');
         // 存储主进程状态信息的文件，运行 status 指令后，内容会写入该文件
-        Worker::$statusFile = $config['status_file'] ??  RUNTIME_PATH . '/gaia.status';
+        Worker::$statusFile = $fileDir . ($config['status_file'] ?? 'gaia.status');
         // workerman事件循环使用对象，默认 \Workerman\Events\Select。一般不需要修改，空则可以
         Worker::$eventLoopClass = $config['event_loop_class'] ?? '';
         // 发送停止命令后，多少秒内程序没有停止，则强制停止
@@ -114,6 +128,16 @@ class App
                 }
             }
         };
+    }
+
+    /**
+     * 获取应用名
+     *
+     * @return string
+     */
+    public static function name(): string
+    {
+        return static::$name;
     }
 
     /**

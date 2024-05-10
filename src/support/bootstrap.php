@@ -100,4 +100,4 @@ define('PLUGIN_PATH', ROOT_PATH . '/plugins');
 | 这里定义windows下应用启动模式, 处理在部分windows环境下start服务自动重启的问题
 |
 */
-define('COMPATIBLE_MOD', false);
+define('COMPATIBLE_MOD', true);
