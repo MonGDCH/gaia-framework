@@ -13,13 +13,6 @@ namespace gaia\interfaces;
 interface ProcessInterface
 {
     /**
-     * 是否启用进程
-     *
-     * @return boolean
-     */
-    public static function enable(): bool;
-
-    /**
      * 获取进程配置
      *
      * @return array

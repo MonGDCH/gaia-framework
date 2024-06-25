@@ -99,9 +99,9 @@ class Gaia
                 continue;
             }
             // 是否启用进程
-            if (!$className::enable()) {
-                continue;
-            }
+            // if (!$className::enable()) {
+            //     continue;
+            // }
             // 获取进程名
             $name = str_replace(DIRECTORY_SEPARATOR, '.', $iterator->getSubPath()) . '.' . $file->getBasename('.php');
             $name = strtolower(ltrim($name, '.'));
@@ -124,8 +124,6 @@ class Gaia
         $dirName = $dirName ?: App::name();
         // 应用运行钩子
         Event::instance()->trigger('app_run');
-        // 初始化worker-map
-        WorkerMap::instance()->init();
         // 加载进程
         $process_files = [];
         foreach ($process as $name => $className) {
@@ -256,11 +254,6 @@ class Gaia
         Logger::instance()->registerChannel(Config::instance()->get('log', []));
         // 执行初始化钩子
         Event::instance()->trigger('process_start', $worker);
-
-        // 记录worker信息
-        if (!App::isWindows()) {
-            WorkerMap::instance()->setWorkerMap($worker->name, $worker->id, posix_getpid());
-        }
     }
 
     /**
@@ -284,14 +277,9 @@ class Gaia
         }
 
         // 进程关闭
-        $worker->onWorkerStop = function ($worker) use ($handler) {
-            // 删除进程信息文件
-            WorkerMap::instance()->removeWorkerMap($worker->name, $worker->id);
-            // 指定自定义回调
-            if (method_exists($handler, 'onWorkerStop') && is_callable([$handler, 'onWorkerStop'])) {
-                $handler->onWorkerStop($worker);
-            }
-        };
+        if (method_exists($handler, 'onWorkerStop') && is_callable([$handler, 'onWorkerStop'])) {
+            $handler->onWorkerStop($worker);
+        }
     }
 
     /**
