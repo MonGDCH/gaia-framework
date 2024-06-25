@@ -76,7 +76,7 @@ class %s extends Command
      *
      * @var string
      */
-    protected static \$defaultDescription = 'The user command %s';
+    protected static \$defaultDescription = 'The user command [%s]';
 
     /**
      * 指令分组
@@ -114,7 +114,7 @@ TPL;
             $class = ucfirst($name);
             $className = $class . 'Command';
             // 创建进程文件
-            $path = COMMAND_PATH . DIRECTORY_SEPARATOR . $class . '.php';
+            $path = COMMAND_PATH . DIRECTORY_SEPARATOR . $className . '.php';
             if (file_exists($path)) {
                 $output->write("Command `{$name}` file exists!");
                 return;

@@ -19,6 +19,11 @@ trait ProcessTrait
      */
     public static function getListenScheme(): string
     {
+        static $scheme = null;
+        if (!is_null($scheme)) {
+            return $scheme;
+        }
+
         $listen = static::getListen();
         if (empty($listen)) {
             return '';
@@ -28,7 +33,8 @@ trait ProcessTrait
             return '';
         }
 
-        return $parseListen[0];
+        $scheme = $parseListen[0];
+        return $scheme;
     }
 
     /**
@@ -38,6 +44,11 @@ trait ProcessTrait
      */
     public static function getListenHost(): string
     {
+        static $host = null;
+        if (!is_null($host)) {
+            return $host;
+        }
+
         $listen = static::getListen();
         if (empty($listen)) {
             return '';
@@ -48,7 +59,8 @@ trait ProcessTrait
         }
 
         $parseHost = explode(':', $parseListen[1], 2);
-        return $parseHost[0];
+        $host = $parseHost[0];
+        return $host;
     }
 
     /**
@@ -58,6 +70,10 @@ trait ProcessTrait
      */
     public static function getListenPort(): int
     {
+        static $port = null;
+        if (!is_null($port)) {
+            return $port;
+        }
         $listen = static::getListen();
         if (empty($listen)) {
             return -1;
@@ -71,7 +87,8 @@ trait ProcessTrait
             return -1;
         }
 
-        return intval($parseHost[1]);
+        $port = intval($parseHost[1]);
+        return $port;
     }
 
     /**

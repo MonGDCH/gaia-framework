@@ -17,7 +17,7 @@ use Workerman\Connection\TcpConnection;
  * 初始化gaia
  * 
  * @author Mon <985558837@qq.com>
- * @version 1.1.2
+ * @version 1.2.0 2024-06-25
  */
 class App
 {
@@ -55,8 +55,9 @@ class App
         static::initialize($app);
         // 获取控制台实例
         $console = static::console();
-        // 设置标题
+        // 优化指令查看面板
         $console->setTitle('');
+        $console->setShowHelpCommand(false);
 
         // 注册内置指令
         $path = __DIR__ . '/command';
@@ -65,8 +66,9 @@ class App
 
         // 注册自定义指令
         if (defined('COMMAND_PATH') && is_dir(COMMAND_PATH)) {
-            $namespance = 'support\\command';
-            $console->load(COMMAND_PATH, $namespance);
+            $user_cmd_path = str_replace(ROOT_PATH, '', COMMAND_PATH);
+            $user_cmd_namespance = trim(str_replace('/', '\\', $user_cmd_path), '\\');
+            $console->load(COMMAND_PATH, $user_cmd_namespance);
         }
 
         Event::instance()->trigger('app_start');
