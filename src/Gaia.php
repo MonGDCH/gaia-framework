@@ -76,6 +76,7 @@ class Gaia
     /**
      * 加载进程，运行程序
      *
+     * @see 该方法已废弃，启动进程请使用bin目录指定启动的进程进行操作
      * @param string $path  进程加载文件路径
      * @param string $namespace 命名空间
      * @param boolean $monitor  是否启动监听进程

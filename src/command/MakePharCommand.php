@@ -18,7 +18,7 @@ use mon\console\Command;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class PharCommand extends Command
+class MakePharCommand extends Command
 {
     /**
      * 指令名

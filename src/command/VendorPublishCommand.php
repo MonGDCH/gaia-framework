@@ -14,7 +14,7 @@ use mon\console\Command;
  * @author Mon <98555883@qq.com>
  * @version 1.0.0
  */
-class PublishCommand extends Command
+class VendorPublishCommand extends Command
 {
     /**
      * 指令名

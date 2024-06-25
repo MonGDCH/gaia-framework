@@ -15,7 +15,7 @@ use mon\console\Command;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class ProcessCommand extends Command
+class MakeProcessCommand extends Command
 {
     /**
      * 指令名
@@ -116,6 +116,10 @@ TPL;
             $class = ucfirst($name);
             // 创建进程文件
             $path = PROCESS_PATH . DIRECTORY_SEPARATOR . $class . '.php';
+            if (file_exists($path)) {
+                $output->write("{$name} process file exists!");
+                return;
+            }
             $content = sprintf($this->process_tpl, $name, $class, $now, $class, $name, $name);
             $save = File::instance()->createFile($content, $path, false);
             if (!$save) {

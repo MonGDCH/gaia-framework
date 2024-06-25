@@ -26,7 +26,7 @@ class App
      * 
      * @var string
      */
-    const VERSION = '1.1.10';
+    const VERSION = '1.2.0';
 
     /**
      * 应用名
@@ -58,10 +58,16 @@ class App
         // 设置标题
         $console->setTitle('');
 
-        // 注册指令
+        // 注册内置指令
         $path = __DIR__ . '/command';
         $namespance = 'gaia\\command';
         $console->load($path, $namespance);
+
+        // 注册自定义指令
+        if (defined('COMMAND_PATH') && is_dir(COMMAND_PATH)) {
+            $namespance = 'support\\command';
+            $console->load(COMMAND_PATH, $namespance);
+        }
 
         Event::instance()->trigger('app_start');
 
