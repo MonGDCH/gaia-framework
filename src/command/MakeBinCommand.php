@@ -47,46 +47,104 @@ class MakeBinCommand extends Command
 #!/usr/bin/env php
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| 加载composer
-|--------------------------------------------------------------------------
-| 加载composer autoload文件
-|
-*/
-require __DIR__ . '/../vendor/autoload.php';
+declare(strict_types=1);
 
+use gaia\App;
+use gaia\Gaia;
+use support\Plugin;
 
-/*
-|--------------------------------------------------------------------------
-| 初始化Gaia
-|--------------------------------------------------------------------------
-| 这里初始化Gaia
-|
-*/
-\gaia\App::init('%s');
+/**
+ * %s 应用启动入口
+ *
+ * Class %s
+ * @author Mon <985558837@qq.com>
+ * @copyright Gaia
+ * @version 1.0.0 %s
+ */
+class %s
+{
+    /**
+     * 应用名称
+     *
+     * @var string
+     */
+    protected \$name = 'test';
 
+    /**
+     * 启动进程
+     *
+     * @example 进程名 => 进程驱动类名, eg: ['test' => Test::class]
+     * @var array
+     */
+    protected \$process = [];
 
-/*
-|--------------------------------------------------------------------------
-| Plugins插件支持
-|--------------------------------------------------------------------------
-| 注册Plugins插件
-|
-*/
-\support\Plugin::register();
+    /**
+     * 开启插件支持
+     *
+     * @var boolean
+     */
+    protected \$supportPlugin = true;
 
+    /**
+     * 构造方法
+     */
+    public function __construct()
+    {
+        // 加载composer autoload文件
+        require_once __DIR__ . '/../vendor/autoload.php';
+    }
 
-/*
-|--------------------------------------------------------------------------
-| 运行程序
-|--------------------------------------------------------------------------
-| 运行程序，基于workerman管理进程，如需同时运行更多进程，可以在数组内添加
-|
-*/
-\gaia\Gaia::instance()->runProcess([
-    // 进程名 => 进程驱动类名, eg: 'test' => Test::class
-]);
+    /**
+     * 启动应用
+     *
+     * @return void
+     */
+    public function run()
+    {
+        if (empty(\$this->process)) {
+            echo '未定义启动进程';
+            return;
+        }
+        if (empty(\$this->name)) {
+            echo '未定义应用名称';
+            return;
+        }
+
+        // 初始化
+        App::init(\$this->name);
+
+        // 加载插件
+        \$this->supportPlugin && Plugin::register();
+
+        // TODO 更多操作
+
+        // 启动服务
+        Gaia::instance()->runProcess(\$this->process);
+    }
+
+    /**
+     * 获取应用名称
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return \$this->name;
+    }
+
+    /**
+     * 获取应用启动进程
+     *
+     * @return array
+     */
+    public function getProcess(): array
+    {
+        return \$this->process;
+    }
+}
+
+// 启用应用
+(new %s)->run();
 
 TPL;
 
@@ -99,16 +157,17 @@ TPL;
      */
     public function execute(Input $input, Output $output)
     {
+        $now = date('Y-m-d H:i:s', time());
         $args = $input->getArgs();
         foreach ($args as $name) {
-            $class = strtolower($name);
+            $className = ucfirst($name);
             // 创建进程文件
-            $path = BIN_PATH . DIRECTORY_SEPARATOR . $class . '.php';
+            $path = BIN_PATH . DIRECTORY_SEPARATOR . $name . '.php';
             if (file_exists($path)) {
                 $output->write("{$name} process start file exists!");
                 return;
             }
-            $content = sprintf($this->bin_tpl, $class);
+            $content = sprintf($this->bin_tpl, $name, $className, $now, $className, $className);
             $save = File::instance()->createFile($content, $path, false);
             if (!$save) {
                 $output->write("Make {$name} process start file faild!");

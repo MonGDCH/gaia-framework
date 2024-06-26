@@ -34,25 +34,25 @@ class Monitor extends Process
     ];
 
     /**
+     * 暂停监听锁文件
+     *
+     * @var string
+     */
+    protected $lock = '';
+
+    /**
      * 监听文件目录
      *
      * @var array
      */
-    protected $_paths = [];
+    protected $paths = [];
 
     /**
      * 监听文件后缀名
      *
      * @var array
      */
-    protected $_extensions = [];
-
-    /**
-     * 暂停监听锁文件
-     *
-     * @var string
-     */
-    protected static $_lock = '';
+    protected $exts = [];
 
     /**
      * 构造方法
@@ -65,9 +65,10 @@ class Monitor extends Process
             echo "\nMonitor file change turned off because exec() has been disabled by disable_functions setting in " . PHP_CONFIG_FILE_PATH . "/php.ini\n";
         }
 
-        $this->_paths = Config::instance()->get('app.monitor.paths', []);
-        $this->_extensions = Config::instance()->get('app.monitor.exts', []);
-        self::$_lock = Config::instance()->get('app.monitor.lock', RUNTIME_PATH . '/monitor.lock');
+        $this->paths = Config::instance()->get('app.monitor.paths', []);
+        $this->exts = Config::instance()->get('app.monitor.exts', []);
+        $this->lock = RUNTIME_PATH . DIRECTORY_SEPARATOR . App::name() . DIRECTORY_SEPARATOR . 'monitor.lock';
+        $this->resume();
     }
 
     /**
@@ -75,9 +76,9 @@ class Monitor extends Process
      *
      * @return void
      */
-    public static function pause()
+    public function pause()
     {
-        File::instance()->createFile(time(), static::$_lock, false);
+        File::instance()->createFile(time(), $this->lock, false);
     }
 
     /**
@@ -85,11 +86,11 @@ class Monitor extends Process
      *
      * @return void
      */
-    public static function resume()
+    public function resume()
     {
         clearstatcache();
-        if (is_file(static::$_lock)) {
-            unlink(static::$_lock);
+        if (is_file($this->lock)) {
+            unlink($this->lock);
         }
     }
 
@@ -98,10 +99,10 @@ class Monitor extends Process
      *
      * @return boolean
      */
-    public static function isPaused(): bool
+    public function isPaused(): bool
     {
         clearstatcache();
-        return file_exists(static::$_lock);
+        return file_exists($this->lock);
     }
 
     /**
@@ -135,7 +136,7 @@ class Monitor extends Process
         if (static::isPaused()) {
             return false;
         }
-        foreach ($this->_paths as $path) {
+        foreach ($this->paths as $path) {
             if ($this->checkFilesChange($path)) {
                 return true;
             }
@@ -174,7 +175,7 @@ class Monitor extends Process
                 continue;
             }
             // 校验修改时间
-            if ($last_mtime < $file->getMTime() && in_array($file->getExtension(), $this->_extensions, true)) {
+            if ($last_mtime < $file->getMTime() && in_array($file->getExtension(), $this->exts, true)) {
                 $var = 0;
                 exec('"' . PHP_BINARY . '" -l ' . $file, $out, $var);
                 if ($var) {

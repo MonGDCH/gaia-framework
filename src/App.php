@@ -33,7 +33,7 @@ class App
      *
      * @var string
      */
-    protected static $name = '';
+    protected static $name = 'gaia';
 
     /**
      * 控制台实例
