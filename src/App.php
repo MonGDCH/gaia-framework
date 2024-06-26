@@ -17,7 +17,7 @@ use Workerman\Connection\TcpConnection;
  * 初始化gaia
  * 
  * @author Mon <985558837@qq.com>
- * @version 1.2.0 2024-06-25
+ * @version 1.2.1 2024-06-26
  */
 class App
 {
@@ -26,7 +26,7 @@ class App
      * 
      * @var string
      */
-    const VERSION = '1.2.0';
+    const VERSION = '1.2.1';
 
     /**
      * 应用名
@@ -48,7 +48,7 @@ class App
      * @param string $app   应用名
      * @return Console
      */
-    public static function init(string $app = ''): Console
+    public static function init(string $app = 'gaia'): Console
     {
         // 初始化配置
         static::initialize($app);

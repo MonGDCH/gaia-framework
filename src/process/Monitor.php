@@ -161,7 +161,7 @@ class Monitor extends Process
      * @param string $monitor_dir 校验的文件目录
      * @return mixed
      */
-    public function checkFilesChange(string $monitor_dir)
+    public function checkFilesChange(string $monitor_dir): bool
     {
         static $last_mtime, $too_many_files_check;
         if (!$last_mtime) {
@@ -171,7 +171,7 @@ class Monitor extends Process
         if (!is_dir($monitor_dir)) {
             // 文件处理
             if (!is_file($monitor_dir)) {
-                return;
+                return false;
             }
             $iterator = [new SplFileInfo($monitor_dir)];
         } else {
@@ -208,6 +208,8 @@ class Monitor extends Process
             echo "Monitor: There are too many files ($count files) in $monitor_dir which makes file monitoring very slow\n";
             $too_many_files_check = 1;
         }
+
+        return false;
     }
 
     /**
