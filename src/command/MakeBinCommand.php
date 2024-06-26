@@ -68,7 +68,7 @@ class %s
      *
      * @var string
      */
-    protected \$name = 'test';
+    protected \$name = '%s';
 
     /**
      * 启动进程
@@ -167,7 +167,7 @@ TPL;
                 $output->write("{$name} process start file exists!");
                 return;
             }
-            $content = sprintf($this->bin_tpl, $name, $className, $now, $className, $className);
+            $content = sprintf($this->bin_tpl, $name, $className, $now, $className, $name, $className);
             $save = File::instance()->createFile($content, $path, false);
             if (!$save) {
                 $output->write("Make {$name} process start file faild!");

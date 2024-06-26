@@ -67,7 +67,8 @@ class Monitor extends Process
 
         $this->paths = Config::instance()->get('app.monitor.paths', []);
         $this->exts = Config::instance()->get('app.monitor.exts', []);
-        $this->lock = RUNTIME_PATH . DIRECTORY_SEPARATOR . App::name() . DIRECTORY_SEPARATOR . 'monitor.lock';
+        $this->lock = RUNTIME_PATH . '/gaia/' . App::name() . '_monitor.lock';
+        // 重启扫描
         $this->resume();
     }
 
@@ -103,6 +104,16 @@ class Monitor extends Process
     {
         clearstatcache();
         return file_exists($this->lock);
+    }
+
+    /**
+     * 获取锁文件名
+     *
+     * @return string
+     */
+    public function getLock(): string
+    {
+        return $this->lock;
     }
 
     /**

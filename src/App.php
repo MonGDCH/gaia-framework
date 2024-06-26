@@ -51,7 +51,6 @@ class App
     public static function init(string $app = ''): Console
     {
         // 初始化配置
-        static::$name = $app;
         static::initialize($app);
         // 获取控制台实例
         $console = static::console();
@@ -84,6 +83,8 @@ class App
      */
     public static function initialize(string $app = '')
     {
+        // 定义应用名
+        static::$name = $app;
         // 加载配置
         defined('ENV_PATH') && file_exists(ENV_PATH) && Env::load(ENV_PATH);
         defined('CONFIG_PATH') && Config::instance()->loadDir(CONFIG_PATH);
