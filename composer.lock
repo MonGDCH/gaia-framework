@@ -9,14 +9,9 @@
         {
             "name": "mongdch/mon-console",
             "version": "1.1.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/MonGDCH/mon-console.git",
-                "reference": "d42d63680a69a28522e7e938744e9b440a104b09"
-            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MonGDCH/mon-console/zipball/d42d63680a69a28522e7e938744e9b440a104b09",
+                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-console/1.1.4/mongdch-mon-console-1.1.4.zip",
                 "reference": "d42d63680a69a28522e7e938744e9b440a104b09",
                 "shasum": ""
             },
@@ -29,7 +24,6 @@
                     "mon\\console\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -54,14 +48,9 @@
         {
             "name": "mongdch/mon-env",
             "version": "1.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/MonGDCH/mon-env.git",
-                "reference": "0aa7e2a48f5738048b222015e6f82593d850964f"
-            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MonGDCH/mon-env/zipball/0aa7e2a48f5738048b222015e6f82593d850964f",
+                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-env/1.1.2/mongdch-mon-env-1.1.2.zip",
                 "reference": "0aa7e2a48f5738048b222015e6f82593d850964f",
                 "shasum": ""
             },
@@ -74,7 +63,6 @@
                     "mon\\env\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -98,14 +86,9 @@
         {
             "name": "mongdch/mon-log",
             "version": "1.0.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/MonGDCH/mon-log.git",
-                "reference": "93d3be10ccddce69602e7df103db163427454aaa"
-            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MonGDCH/mon-log/zipball/93d3be10ccddce69602e7df103db163427454aaa",
+                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-log/1.0.5/mongdch-mon-log-1.0.5.zip",
                 "reference": "93d3be10ccddce69602e7df103db163427454aaa",
                 "shasum": ""
             },
@@ -119,7 +102,6 @@
                     "mon\\log\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -146,16 +128,11 @@
         },
         {
             "name": "mongdch/mon-util",
-            "version": "1.5.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/MonGDCH/mon-util.git",
-                "reference": "a4f89d00e66f62eab7a4cf40e90e2d2acdbdcab9"
-            },
+            "version": "1.5.16",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MonGDCH/mon-util/zipball/a4f89d00e66f62eab7a4cf40e90e2d2acdbdcab9",
-                "reference": "a4f89d00e66f62eab7a4cf40e90e2d2acdbdcab9",
+                "url": "https://mirrors.cloud.tencent.com/repository/composer/mongdch/mon-util/1.5.16/mongdch-mon-util-1.5.16.zip",
+                "reference": "8e0f9dc4945c85b8a8cfef23275e00cf6c317b51",
                 "shasum": ""
             },
             "require": {
@@ -171,7 +148,6 @@
                     "mon\\util\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
@@ -192,21 +168,16 @@
             ],
             "support": {
                 "issues": "https://github.com/MonGDCH/mon-util/issues",
-                "source": "https://github.com/MonGDCH/mon-util/tree/1.5.5"
+                "source": "https://github.com/MonGDCH/mon-util/tree/1.5.16"
             },
-            "time": "2024-04-15T05:45:46+00:00"
+            "time": "2025-04-29T09:32:29+00:00"
         },
         {
             "name": "psr/container",
             "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/container.git",
-                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f"
-            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/container/zipball/b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "url": "https://mirrors.cloud.tencent.com/repository/composer/psr/container/1.0.0/psr-container-1.0.0.zip",
                 "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
                 "shasum": ""
             },
@@ -224,7 +195,6 @@
                     "Psr\\Container\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -252,14 +222,9 @@
         {
             "name": "psr/log",
             "version": "1.1.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/log.git",
-                "reference": "d49695b909c3b7628b6289db5479a1c204601f11"
-            },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/d49695b909c3b7628b6289db5479a1c204601f11",
+                "url": "https://mirrors.cloud.tencent.com/repository/composer/psr/log/1.1.4/psr-log-1.1.4.zip",
                 "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
                 "shasum": ""
             },
@@ -277,7 +242,6 @@
                     "Psr\\Log\\": "Psr/Log/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -301,16 +265,11 @@
         },
         {
             "name": "workerman/workerman",
-            "version": "v4.1.15",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/walkor/workerman.git",
-                "reference": "afc8242fc769ab7cf22eb4ac22b97cb59d465e4e"
-            },
+            "version": "v4.1.17",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/walkor/workerman/zipball/afc8242fc769ab7cf22eb4ac22b97cb59d465e4e",
-                "reference": "afc8242fc769ab7cf22eb4ac22b97cb59d465e4e",
+                "url": "https://mirrors.cloud.tencent.com/repository/composer/workerman/workerman/v4.1.17/workerman-workerman-v4.1.17.zip",
+                "reference": "bb9e4b0c3fc3931a2ae38a1fb7a3ac09246efae9",
                 "shasum": ""
             },
             "require": {
@@ -325,7 +284,6 @@
                     "Workerman\\": "./"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -350,28 +308,18 @@
                 "source": "https://github.com/walkor/workerman",
                 "wiki": "http://doc.workerman.net/"
             },
-            "funding": [
-                {
-                    "url": "https://opencollective.com/workerman",
-                    "type": "open_collective"
-                },
-                {
-                    "url": "https://www.patreon.com/walkor",
-                    "type": "patreon"
-                }
-            ],
-            "time": "2024-02-19T02:10:39+00:00"
+            "time": "2024-11-07T07:48:34+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.2.0"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
