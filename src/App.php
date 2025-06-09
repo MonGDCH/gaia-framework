@@ -111,7 +111,7 @@ class App
     public static function initWorker(array $config, string $dirName = '')
     {
         $fileDir = RUNTIME_PATH . '/gaia/workerman/' . ($dirName ? ($dirName . '/') : '');
-        File::instance()->createDir($fileDir);
+        File::createDir($fileDir);
         // 默认的最大可接受数据包大小
         TcpConnection::$defaultMaxPackageSize = $config['max_package_size'] ?? 10 * 1024 * 1024;
         // 存储主进程PID的文件

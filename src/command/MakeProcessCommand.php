@@ -121,7 +121,7 @@ TPL;
                 return;
             }
             $content = sprintf($this->process_tpl, $name, $class, $now, $class, $name, $name);
-            $save = File::instance()->createFile($content, $path, false);
+            $save = File::createFile($content, $path, false);
             if (!$save) {
                 $output->write("Make {$name} process file faild!");
                 continue;

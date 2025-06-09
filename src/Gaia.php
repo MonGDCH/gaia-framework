@@ -346,7 +346,7 @@ EOF;
         $saveName = $saveName ?: $name;
         $savePath = '/gaia/windows' . ($dirName ? "/{$dirName}/" : '/') . 'start_' . $saveName . '.php';
         $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . $savePath;
-        File::instance()->createFile($tmp, $fileName, false);
+        File::createFile($tmp, $fileName, false);
         return $fileName;
     }
 
@@ -383,7 +383,7 @@ if (is_callable('opcache_reset')) {
 EOF;
         $savePath = '/gaia/windows' . ($dirName ? "/{$dirName}/" : '/') . 'start.php';
         $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . $savePath;
-        File::instance()->createFile($tmp, $fileName, false);
+        File::createFile($tmp, $fileName, false);
         return $fileName;
     }
 }

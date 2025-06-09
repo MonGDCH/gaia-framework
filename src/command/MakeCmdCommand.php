@@ -120,7 +120,7 @@ TPL;
                 return;
             }
             $content = sprintf($this->cmd_tpl, $name, $class, $now, $className, $name, $name, $class);
-            $save = File::instance()->createFile($content, $path, false);
+            $save = File::createFile($content, $path, false);
             if (!$save) {
                 $output->write("Make {$name} command file faild!");
                 continue;

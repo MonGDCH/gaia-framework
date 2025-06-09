@@ -2,7 +2,7 @@
     "name": "mongdch/gaia-framework",
     "description": "The Gaia Framework core",
     "license": "MIT",
-    "homepage": "http://gdmon.com/",
+    "homepage": "https://github.com/MonGDCH",
     "keywords": [
         "mon",
         "workerman",
@@ -13,7 +13,7 @@
         {
             "name": "Mon",
             "email": "985558837@qq.com",
-            "homepage": "http://www.gdmon.com/",
+            "homepage": "https://github.com/MonGDCH",
             "role": "Developer"
         }
     ],

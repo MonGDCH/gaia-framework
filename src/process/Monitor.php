@@ -79,7 +79,7 @@ class Monitor extends Process
      */
     public function pause()
     {
-        File::instance()->createFile(time(), $this->lock, false);
+        File::createFile(time(), $this->lock, false);
     }
 
     /**

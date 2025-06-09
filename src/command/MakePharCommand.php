@@ -64,7 +64,7 @@ class MakePharCommand extends Command
 
         // 保存路径
         $dir = Config::instance()->get('app.phar.dirname', ROOT_PATH);
-        File::instance()->createDir($dir);
+        File::createDir($dir);
         // 移除原文件
         $phar_file = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . Config::instance()->get('app.phar.filename', 'gaia.phar');
         if (file_exists($phar_file)) {
