@@ -6,6 +6,7 @@ namespace gaia\process;
 
 use gaia\App;
 use SplFileInfo;
+use mon\util\OS;
 use gaia\Process;
 use mon\util\File;
 use mon\env\Config;
@@ -131,7 +132,7 @@ class Monitor extends Process
             });
         }
         // linux环境，监听系统内存
-        if (!App::isWindows()) {
+        if (!OS::isWindows()) {
             $memory_limit = $this->getMemoryLimit();
             Timer::add(60, [$this, 'checkMemory'], [$memory_limit]);
         }
@@ -196,7 +197,7 @@ class Monitor extends Process
                 $last_mtime = $file->getMTime();
                 echo $file . " update and reload\n";
                 // linux环境，向主进程发送SIGUSR1信号，重新加载程序
-                if (!App::isWindows()) {
+                if (!OS::isWindows()) {
                     posix_kill(posix_getppid(), SIGUSR1);
                 } else {
                     return true;

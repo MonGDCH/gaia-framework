@@ -3,12 +3,7 @@
     "description": "The Gaia Framework core",
     "license": "MIT",
     "homepage": "https://github.com/MonGDCH",
-    "keywords": [
-        "mon",
-        "workerman",
-        "high performance",
-        "multi process"
-    ],
+    "keywords": ["mon", "workerman", "high performance", "multi process"],
     "authors": [
         {
             "name": "Mon",
@@ -19,7 +14,7 @@
     ],
     "require": {
         "php": ">=7.4.0",
-        "workerman/workerman": "^4.1|^5.1",
+        "workerman/workerman": "^4.1 || ^5.1",
         "mongdch/mon-env": "^1.1",
         "mongdch/mon-log": "^1.0",
         "mongdch/mon-console": "^1.1",

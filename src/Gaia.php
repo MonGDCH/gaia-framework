@@ -6,6 +6,7 @@ namespace gaia;
 
 use Throwable;
 use mon\env\Env;
+use mon\util\OS;
 use mon\util\File;
 use mon\util\Event;
 use mon\env\Config;
@@ -48,7 +49,9 @@ class Gaia
         // 通信协议
         'transport',
         // 连接的协议类
-        'protocol'
+        'protocol',
+        // 事件循环类
+        'eventLoop'
     ];
 
     /**
@@ -137,7 +140,7 @@ class Gaia
             // 获取进程配置
             $config = $className::getProcessConfig();
             // 运行
-            if (!App::isWindows()) {
+            if (!OS::isWindows()) {
                 // linux环境
                 $this->bootstrap($name, $config, $className);
             } else {
@@ -149,7 +152,7 @@ class Gaia
 
         // 运行内置monitor进程，启动进程
         $name = 'monitor';
-        if (!App::isWindows()) {
+        if (!OS::isWindows()) {
             // linux环境
             if ($monitor) {
                 $this->bootstrap($name, Monitor::getProcessConfig(), Monitor::class);

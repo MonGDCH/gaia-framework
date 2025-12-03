@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace gaia\command;
 
 use Phar;
-use gaia\App;
 use mon\util\File;
 use mon\env\Config;
 use mon\console\Input;
@@ -18,14 +17,14 @@ use mon\console\Command;
  * @author Mon <985558837@qq.com>
  * @version 1.0.0
  */
-class MakePharCommand extends Command
+class BuildPharCommand extends Command
 {
     /**
      * 指令名
      *
      * @var string
      */
-    protected static $defaultName = 'make:phar';
+    protected static $defaultName = 'build:phar';
 
     /**
      * 指令描述
@@ -50,9 +49,6 @@ class MakePharCommand extends Command
      */
     public function execute(Input $input, Output $output)
     {
-        if (App::isWindows()) {
-            return $output->error('The `' . self::$defaultName . '` command command for windows env not supported!');
-        }
         // 是否启用phar扩展
         if (!class_exists(Phar::class, false)) {
             return $output->error("The 'phar' extension is required for build phar package");
@@ -63,10 +59,10 @@ class MakePharCommand extends Command
         }
 
         // 保存路径
-        $dir = Config::instance()->get('app.phar.dirname', ROOT_PATH);
+        $dir = Config::instance()->get('app.phar.build_path', ROOT_PATH);
         File::createDir($dir);
         // 移除原文件
-        $phar_file = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . Config::instance()->get('app.phar.filename', 'gaia.phar');
+        $phar_file = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . Config::instance()->get('app.phar.phar_name', 'gaia.phar');
         if (file_exists($phar_file)) {
             unlink($phar_file);
         }
@@ -78,10 +74,24 @@ class MakePharCommand extends Command
         // 设置加密算法
         $phar->setSignatureAlgorithm(Config::instance()->get('app.phar.algorithm', Phar::SHA256));
         // 设置包路径
-        $phar->buildFromDirectory(ROOT_PATH);
+        $exclude_pattern = config('app.phar.exclude_pattern', '#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.setting/|/runtime/|/vendor-bin/|/build/|/bin/))(.*)$#');
+        $phar->buildFromDirectory(ROOT_PATH, $exclude_pattern);
         // 移除文件
-        $exclude = Config::instance()->get('app.phar.exclude_files', []);
-        foreach ($exclude as $file) {
+        $exclude_files = Config::instance()->get('app.phar.exclude_files', []);
+        // 打包生成的phar和bin文件是面向生产环境的，所以以下这些命令没有任何意义，执行的话甚至会出错，需要排除在外。
+        $exclude_command_files = [
+            'BuildPharCommand.php',
+            'BuildBinCommand.php',
+            'MakeBinCommand.php',
+            'MakeCmdCommand.php',
+            'MakeProcessCommand.php',
+            'VendorPublishCommand.php',
+        ];
+        $exclude_command_files = array_map(function ($cmd_file) {
+            return 'vendor/mongdch/gaia-framework/src/command/' . $cmd_file;
+        }, $exclude_command_files);
+        $exclude_files = array_unique(array_merge($exclude_command_files, $exclude_files));
+        foreach ($exclude_files as $file) {
             if ($phar->offsetExists($file)) {
                 $phar->delete($file);
             }
@@ -101,6 +111,6 @@ __HALT_COMPILER();
         // 关闭缓存区
         $phar->stopBuffering();
         unset($phar);
-        return $output->write('Success', true, true);
+        return $output->write('Write requests to the Phar archive, save changes to disk.');
     }
 }

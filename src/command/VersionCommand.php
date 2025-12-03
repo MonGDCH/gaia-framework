@@ -54,6 +54,6 @@ class VersionCommand extends Command
      */
     public function execute(Input $input, Output $output)
     {
-        $output->write(App::VERSION, true, true);
+        $output->write(App::VERSION);
     }
 }

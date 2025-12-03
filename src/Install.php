@@ -26,6 +26,7 @@ class Install
      */
     protected static $file_relation = [
         'gaia'                  => 'gaia',
+        'support/app.php'       => 'config/app.php',
         'support/bootstrap.php' => 'support/bootstrap.php',
         'support/Plugin.php'    => 'support/Plugin.php',
     ];

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace gaia;
 
 use mon\env\Env;
+use mon\util\OS;
 use mon\util\File;
 use mon\env\Config;
 use mon\log\Logger;
@@ -26,7 +27,7 @@ class App
      * 
      * @var string
      */
-    const VERSION = '1.2.4';
+    const VERSION = '1.2.5';
 
     /**
      * 应用名
@@ -123,7 +124,7 @@ class App
         // 存储主进程状态信息的文件，运行 status 指令后，内容会写入该文件
         Worker::$statusFile = $fileDir . ($config['status_file'] ?? 'gaia.status');
         // workerman事件循环使用对象，默认 \Workerman\Events\Select。一般不需要修改，空则可以
-        Worker::$eventLoopClass = $config['event_loop_class'] ?? '';
+        Worker::$eventLoopClass = $config['event_loop'] ?? '';
         // 发送停止命令后，多少秒内程序没有停止，则强制停止
         Worker::$stopTimeout = $config['stop_timeout'] ?? 2;
         // 重置opcache缓存
@@ -164,16 +165,6 @@ class App
     }
 
     /**
-     * 当前环境是否未windows运行环境
-     *
-     * @return boolean
-     */
-    public static function isWindows(): bool
-    {
-        return DIRECTORY_SEPARATOR === '\\';
-    }
-
-    /**
      * 获取服务器CPU内核数
      *
      * @return integer
@@ -181,7 +172,7 @@ class App
     public static function cpuCount(): int
     {
         // Windows 不支持进程数设置
-        if (self::isWindows()) {
+        if (OS::isWindows()) {
             return 1;
         }
         static $count = 0;
