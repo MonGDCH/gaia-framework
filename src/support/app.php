@@ -66,7 +66,7 @@ return [
         // openSSL私钥文件路径
         'private_key_file'  => '',
         // 排除的文件或目录正则
-        'exclude_pattern'   => '#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.setting/|/runtime/|/vendor-bin/|/build/|/bin/))(.*)$#',
+        'exclude_pattern'   => '#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.svn/|/.setting/|/runtime/|/vendor-bin/|/build/|/bin/))(.*)$#',
         // 排除文件
         'exclude_files'     => ['.env', '.env.example', '.gitignore', 'LICENSE', 'composer.dev.json', 'composer.json', 'composer.lock', 'README.md', 'gaia.phar', 'gaia.bin'],
         // 自定义ini配置

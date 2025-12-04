@@ -150,20 +150,22 @@ class Gaia
             }
         }
 
-        // 运行内置monitor进程，启动进程
-        $name = 'monitor';
-        if (!OS::isWindows()) {
-            // linux环境
-            if ($monitor) {
-                $this->bootstrap($name, Monitor::getProcessConfig(), Monitor::class);
+        // 非phar环境，运行内置monitor进程，启动进程
+        if (!defined('IN_PHAR')) {
+            $name = 'monitor';
+            if (!OS::isWindows()) {
+                // linux环境
+                if ($monitor) {
+                    $this->bootstrap($name, Monitor::getProcessConfig(), Monitor::class);
+                }
+                Worker::runAll();
+            } else {
+                // windows环境
+                if ($monitor) {
+                    $process_files[] = $this->createProcessFile($name, Monitor::class, $name, $dirName);
+                }
+                $this->runWin($process_files, $dirName);
             }
-            Worker::runAll();
-        } else {
-            // windows环境
-            if ($monitor) {
-                $process_files[] = $this->createProcessFile($name, Monitor::class, $name, $dirName);
-            }
-            $this->runWin($process_files, $dirName);
         }
     }
 

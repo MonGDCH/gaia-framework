@@ -65,8 +65,8 @@ class App
         $console->load($path, $namespance);
 
         // 注册自定义指令
-        if (defined('COMMAND_PATH') && is_dir(COMMAND_PATH)) {
-            $user_cmd_path = str_replace(ROOT_PATH, '', COMMAND_PATH);
+        if (defined('COMMAND_PATH')) {
+            $user_cmd_path = str_replace(BASE_PATH, '', COMMAND_PATH);
             $user_cmd_namespance = trim(str_replace('/', '\\', $user_cmd_path), '\\');
             $console->load(COMMAND_PATH, $user_cmd_namespance);
         }

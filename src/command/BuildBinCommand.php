@@ -54,7 +54,7 @@ class BuildBinCommand extends Command
         }
         // 是否支持phar生成
         if (ini_get('phar.readonly')) {
-            return $output->error("The 'phar.readonly' is 'On', build phar must setting it 'Off' or exec with 'php -d phar.readonly=0 ./gaia phar:bin'");
+            return $output->error("The 'phar.readonly' is 'On', build phar must setting it 'Off' or exec with 'php -d phar.readonly=0 ./gaia build:bin'");
         }
         $args = $input->getArgs();
         $version = floatval($args[0] ?? PHP_VERSION);
@@ -64,7 +64,7 @@ class BuildBinCommand extends Command
         $pharFileName = config('app.phar.phar_name', 'gaia.phar');
         $binFileName = config('app.phar.bin_name', 'gaia.bin');
         $buildDir = config('app.phar.build_path', ROOT_PATH . DIRECTORY_SEPARATOR . 'build');
-        $customIni = config('app.phar.custom_ini', []);
+        $customIni = implode(PHP_EOL, config('app.phar.custom_ini', []));
 
         $binFile = "$buildDir/$binFileName";
         $pharFile = "$buildDir/$pharFileName";

@@ -55,7 +55,7 @@ class BuildPharCommand extends Command
         }
         // 是否支持phar生成
         if (ini_get('phar.readonly')) {
-            return $output->error("The 'phar.readonly' is 'On', build phar must setting it 'Off' or exec with 'php -d phar.readonly=0 ./gaia phar:build'");
+            return $output->error("The 'phar.readonly' is 'On', build phar must setting it 'Off' or exec with 'php -d phar.readonly=0 ./gaia build:phar'");
         }
 
         // 保存路径
@@ -74,7 +74,7 @@ class BuildPharCommand extends Command
         // 设置加密算法
         $phar->setSignatureAlgorithm(Config::instance()->get('app.phar.algorithm', Phar::SHA256));
         // 设置包路径
-        $exclude_pattern = config('app.phar.exclude_pattern', '#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.setting/|/runtime/|/vendor-bin/|/build/|/bin/))(.*)$#');
+        $exclude_pattern = config('app.phar.exclude_pattern', '#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.svn/|/.setting/|/runtime/|/vendor-bin/|/build/|/bin/))(.*)$#');
         $phar->buildFromDirectory(ROOT_PATH, $exclude_pattern);
         // 移除文件
         $exclude_files = Config::instance()->get('app.phar.exclude_files', []);
