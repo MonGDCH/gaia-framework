@@ -111,6 +111,6 @@ __HALT_COMPILER();
         // 关闭缓存区
         $phar->stopBuffering();
         unset($phar);
-        return $output->write('Write requests to the Phar archive, save changes to disk.');
+        return $output->write("Save business code to the Phar archive, save to $phar_file");
     }
 }

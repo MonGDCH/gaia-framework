@@ -92,7 +92,7 @@ class BuildBinCommand extends Command
                 $client = stream_socket_client("tcp://$domain:80");
             }
 
-            fwrite($client, "GET /php/$microZipFileName HTTP/1.1\r\nAccept: text/html\r\nHost: $domain\r\nUser-Agent: gaia/console\r\n\r\n");
+            fwrite($client, "GET /php/$microZipFileName HTTP/1.1\r\nAccept: text/html\r\nHost: $domain\r\nUser-Agent: Gaia\r\n\r\n");
             $bodyLength = 0;
             $bodyBuffer = '';
             $lastPercent = 0;
