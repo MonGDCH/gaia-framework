@@ -63,12 +63,33 @@ return [
         'bin_name'          => 'gaia.bin',
         // 签名算法
         'algorithm'         => Phar::SHA256,
+        // 文件混淆配置
+        'obfuscator'        => [
+            // 配置
+            'config' => [
+                // 是否对变量名进行混淆（默认 true），暂不支持PHP8命名参数风格代码混淆
+                'renameVariables' => true,
+                // 是否保留注释（默认 false，保留=false 表示会移除注释）
+                'preserveComments' => false,
+                // 在保留注释时是否规范化注释中的换行为 LF（默认 false）
+                'normalizeCommentNewlines' => false,
+            ],
+            // 过滤变量名 
+            'fillterVars' => []
+        ],
+        // 排除目录
+        'exclude_dirs'      => ['bin', 'build', 'resource', 'public', 'runtime', '.git', '.github', '.idea', '.setting'],
+        // 排除文件
+        'exclude_files'     => ['composer.json', 'composer.lock', 'composer.dev.json', '.env', '.gitignore', '.DS_Store', 'LICENSE', '*.md', '*.example'],
+        // 排除文件路径
+        'exclude_filePaths' => [],
+        // 需要混淆的目录
+        'obfuscate_dirs'    => ['app', 'support', 'config'],
         // openSSL私钥文件路径
         'private_key_file'  => '',
         // 排除的文件或目录正则
         'exclude_pattern'   => '#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.svn/|/.setting/|/runtime/|/vendor-bin/|/build/|/bin/))(.*)$#',
-        // 排除文件
-        'exclude_files'     => ['.env', '.env.example', '.gitignore', 'LICENSE', 'composer.dev.json', 'composer.json', 'composer.lock', 'README.md', 'gaia.phar', 'gaia.bin'],
+
         // 自定义ini配置
         'custom_ini'        => ['memory_limit=256M'],
     ],

@@ -10,6 +10,9 @@ use mon\env\Config;
 use mon\console\Input;
 use mon\console\Output;
 use mon\console\Command;
+use mon\util\Obfuscator;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
 
 /**
  * 生成Phar包
@@ -55,11 +58,11 @@ class BuildPharCommand extends Command
         }
         // 是否支持phar生成
         if (ini_get('phar.readonly')) {
-            return $output->error("The 'phar.readonly' is 'On', build phar must setting it 'Off' or exec with 'php -d phar.readonly=0 ./gaia build:phar'");
+            return $output->error("The 'phar.readonly' is 'On', build phar must setting it 'Off' or exec with " . Output::WARING . " 'php -d phar.readonly=0 ./gaia build:phar'",);
         }
 
         // 保存路径
-        $dir = Config::instance()->get('app.phar.build_path', ROOT_PATH);
+        $dir = Config::instance()->get('app.phar.build_path', ROOT_PATH . DIRECTORY_SEPARATOR . 'build');
         File::createDir($dir);
         // 移除原文件
         $phar_file = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . Config::instance()->get('app.phar.phar_name', 'gaia.phar');
@@ -73,29 +76,102 @@ class BuildPharCommand extends Command
         $phar->startBuffering();
         // 设置加密算法
         $phar->setSignatureAlgorithm(Config::instance()->get('app.phar.algorithm', Phar::SHA256));
-        // 设置包路径
-        $exclude_pattern = config('app.phar.exclude_pattern', '#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.svn/|/.setting/|/runtime/|/vendor-bin/|/build/|/bin/))(.*)$#');
-        $phar->buildFromDirectory(ROOT_PATH, $exclude_pattern);
-        // 移除文件
+        // 文件混淆处理配置
+        $obfuscator_config = Config::instance()->get('app.phar.obfuscator.config', []);
+        // 文件混淆处理过滤变量名
+        $obfuscator_fillterVars = Config::instance()->get('app.phar.obfuscator.fillterVars', []);
+        // 混淆处理
+        $obfuscator = new Obfuscator($obfuscator_config, $obfuscator_fillterVars);
+        // 移除的目录
+        $exclude_dirs = Config::instance()->get('app.phar.exclude_dirs', []);
+        // 排除文件名
         $exclude_files = Config::instance()->get('app.phar.exclude_files', []);
-        // 打包生成的phar和bin文件是面向生产环境的，所以以下这些命令没有任何意义，执行的话甚至会出错，需要排除在外。
-        $exclude_command_files = [
-            'BuildPharCommand.php',
-            'BuildBinCommand.php',
-            'MakeBinCommand.php',
-            'MakeCmdCommand.php',
-            'MakeProcessCommand.php',
-            'VendorPublishCommand.php',
-        ];
-        $exclude_command_files = array_map(function ($cmd_file) {
-            return 'vendor/mongdch/gaia-framework/src/command/' . $cmd_file;
-        }, $exclude_command_files);
-        $exclude_files = array_unique(array_merge($exclude_command_files, $exclude_files));
-        foreach ($exclude_files as $file) {
-            if ($phar->offsetExists($file)) {
-                $phar->delete($file);
+        // 排除的文件完整路径
+        $exclude_filePaths = array_merge(Config::instance()->get('app.phar.exclude_filePaths', []), [
+            'vendor/mongdch/gaia-framework/src/command/BuildPharCommand.php',
+            'vendor/mongdch/gaia-framework/src/command/BuildBinCommand.php',
+            'vendor/mongdch/gaia-framework/src/command/MakeBinCommand.php',
+            'vendor/mongdch/gaia-framework/src/command/MakeCmdCommand.php',
+            'vendor/mongdch/gaia-framework/src/command/MakeProcessCommand.php',
+            'vendor/mongdch/gaia-framework/src/command/VendorPublishCommand.php',
+            'support/command/http/RouteCacheCommand.php',
+            'support/command/http/RouteClearCommand.php',
+            'support/command/crontab/DbInitCommand.php',
+            'support/command/queue/DbInitCommand.php'
+        ]);
+        $exclude_filePaths = array_map(function ($dir) {
+            // 将目录分割符号\,/统一修改为 DIRECTORY_SEPARATOR
+            return str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $dir);
+        }, $exclude_filePaths);
+
+        // 需要混淆的目录
+        $obfuscate_dirs =  Config::instance()->get('app.phar.obfuscate_dirs', []);
+        // 修正路径
+        $exclude_dirs = array_map(function ($dir) {
+            // 将目录分割符号\,/统一修改为 DIRECTORY_SEPARATOR
+            return str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $dir);
+        }, $exclude_dirs);
+        $obfuscate_dirs = array_map(function ($dir) {
+            // 将目录分割符号\,/统一修改为 DIRECTORY_SEPARATOR
+            return str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $dir);
+        }, $obfuscate_dirs);
+
+        // 遍历源码目录，处理并添加文件
+        $output->spinBegiin();
+        $directory = new RecursiveDirectoryIterator(ROOT_PATH, RecursiveDirectoryIterator::SKIP_DOTS);
+        $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+        /** @var RecursiveDirectoryIterator $iterator */
+        foreach ($iterator as $item) {
+            $relativePath = $iterator->getSubPathname();
+            $fileName = $item->getFilename();
+            $pathName = $item->getPathname();
+            // 不处理目录
+            if ($item->isDir()) {
+                continue;
             }
+            if (in_array($relativePath, $exclude_filePaths)) {
+                continue;
+            }
+            // 判断是否在排除文件或目录中
+            foreach ($exclude_dirs as $pattern) {
+                if (strpos($relativePath, $pattern) === 0) {
+                    continue 2;
+                }
+            }
+            foreach ($exclude_files as $pattern) {
+                if (fnmatch($pattern, $fileName)) {
+                    continue 2;
+                }
+            }
+
+            // 处理文件
+            if ($item->getExtension() !== 'php') {
+                // 非PHP文件，直接导入
+                $phar->addFromString($relativePath, File::read($pathName));
+            } else {
+                // 混淆文件目录，混淆处理
+                $isObfuscate = false;
+                foreach ($obfuscate_dirs as $pattern) {
+                    if (strpos($relativePath, $pattern) === 0) {
+                        // 混淆处理
+                        $code = File::read($pathName);
+                        $new_code = $obfuscator->encode($code);
+                        $phar->addFromString($relativePath, $new_code);
+                        $isObfuscate = true;
+                        $newPath = $dir . DIRECTORY_SEPARATOR . '/encode/' . $relativePath;
+                        File::createFile($new_code, $newPath, false);
+                        break;
+                    }
+                }
+                // 直接导入
+                if (!$isObfuscate) {
+                    $phar->addFromString($relativePath, File::read($pathName));
+                }
+            }
+
+            $output->spin();
         }
+        $output->spinEnd();
 
         $output->write('Files collect complete, begin add file to Phar.');
 
