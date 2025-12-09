@@ -7,10 +7,10 @@ namespace gaia\command;
 use Phar;
 use mon\util\File;
 use mon\env\Config;
+use mon\util\Minifier;
 use mon\console\Input;
 use mon\console\Output;
 use mon\console\Command;
-use mon\util\Obfuscator;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
@@ -76,14 +76,12 @@ class BuildPharCommand extends Command
         $phar->startBuffering();
         // 设置加密算法
         $phar->setSignatureAlgorithm(Config::instance()->get('app.phar.algorithm', Phar::SHA256));
-        // 文件混淆处理配置
-        $obfuscator_config = Config::instance()->get('app.phar.obfuscator.config', []);
-        // 文件混淆处理过滤变量名
-        $obfuscator_fillterVars = Config::instance()->get('app.phar.obfuscator.fillterVars', []);
-        // 混淆处理
-        $obfuscator = new Obfuscator($obfuscator_config, $obfuscator_fillterVars);
+        // 压缩混淆处理
+        $minifier = new Minifier();
         // 移除的目录
         $exclude_dirs = Config::instance()->get('app.phar.exclude_dirs', []);
+        // 排除的路径
+        $exclude_paths = Config::instance()->get('app.phar.exclude_paths', []);
         // 排除文件名
         $exclude_files = Config::instance()->get('app.phar.exclude_files', []);
         // 排除的文件完整路径
@@ -123,6 +121,7 @@ class BuildPharCommand extends Command
         /** @var RecursiveDirectoryIterator $iterator */
         foreach ($iterator as $item) {
             $relativePath = $iterator->getSubPathname();
+            $relativePath2 = str_replace(['\\', '/'], '/', $relativePath);
             $fileName = $item->getFilename();
             $pathName = $item->getPathname();
             // 不处理目录
@@ -138,6 +137,11 @@ class BuildPharCommand extends Command
                     continue 2;
                 }
             }
+            foreach ($exclude_paths as $pattern) {
+                if (fnmatch($pattern, $relativePath2)) {
+                    continue 2;
+                }
+            }
             foreach ($exclude_files as $pattern) {
                 if (fnmatch($pattern, $fileName)) {
                     continue 2;
@@ -147,25 +151,24 @@ class BuildPharCommand extends Command
             // 处理文件
             if ($item->getExtension() !== 'php') {
                 // 非PHP文件，直接导入
-                $phar->addFromString($relativePath, File::read($pathName));
+                $phar->addFromString($relativePath, $minifier->file($pathName, true));
             } else {
                 // 混淆文件目录，混淆处理
                 $isObfuscate = false;
                 foreach ($obfuscate_dirs as $pattern) {
                     if (strpos($relativePath, $pattern) === 0) {
                         // 混淆处理
-                        $code = File::read($pathName);
-                        $new_code = $obfuscator->encode($code);
-                        $phar->addFromString($relativePath, $new_code);
+                        $code = $minifier->file($pathName, true);
+                        $phar->addFromString($relativePath, $code);
                         $isObfuscate = true;
                         $newPath = $dir . DIRECTORY_SEPARATOR . '/encode/' . $relativePath;
-                        File::createFile($new_code, $newPath, false);
+                        File::createFile($code, $newPath, false);
                         break;
                     }
                 }
                 // 直接导入
                 if (!$isObfuscate) {
-                    $phar->addFromString($relativePath, File::read($pathName));
+                    $phar->addFromString($relativePath, $minifier->file($pathName, false));
                 }
             }
 

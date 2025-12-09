@@ -63,22 +63,10 @@ return [
         'bin_name'          => 'gaia.bin',
         // 签名算法
         'algorithm'         => Phar::SHA256,
-        // 文件混淆配置
-        'obfuscator'        => [
-            // 配置
-            'config' => [
-                // 是否对变量名进行混淆（默认 true），暂不支持PHP8命名参数风格代码混淆
-                'renameVariables' => true,
-                // 是否保留注释（默认 false，保留=false 表示会移除注释）
-                'preserveComments' => false,
-                // 在保留注释时是否规范化注释中的换行为 LF（默认 false）
-                'normalizeCommentNewlines' => false,
-            ],
-            // 过滤变量名 
-            'fillterVars' => []
-        ],
-        // 排除目录
+        // 基于根目录排除的目录
         'exclude_dirs'      => ['bin', 'build', 'resource', 'public', 'runtime', '.git', '.github', '.idea', '.setting'],
+        // 排除路径
+        'exclude_paths'     => ['*/test/*', '*/tests/*', '*/example/*', '*/examples/*', '*/demo/*', '*/phpunit/*', '*/.github/*', '*/.git/*', '*/.idea/*', '*/.setting/*'],
         // 排除文件
         'exclude_files'     => ['composer.json', 'composer.lock', 'composer.dev.json', '.env', '.gitignore', '.DS_Store', 'LICENSE', '*.md', '*.example'],
         // 排除文件路径
@@ -89,8 +77,7 @@ return [
         'private_key_file'  => '',
         // 排除的文件或目录正则
         'exclude_pattern'   => '#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.svn/|/.setting/|/runtime/|/vendor-bin/|/build/|/bin/))(.*)$#',
-
-        // 自定义ini配置
+        // 二进制编译运行环境自定义ini配置
         'custom_ini'        => ['memory_limit=256M'],
     ],
 ];
