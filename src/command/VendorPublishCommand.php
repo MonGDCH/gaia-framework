@@ -62,6 +62,6 @@ class VendorPublishCommand extends Command
             return $out->error('The package [' . $plugin . '] not support Gaia Publish!');
         }
 
-        return $out->block('Publish ' . $vendor);
+        return $out->block('Publish ' . $vendor, 'success');
     }
 }

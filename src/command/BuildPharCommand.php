@@ -91,11 +91,11 @@ class BuildPharCommand extends Command
             'vendor/mongdch/gaia-framework/src/command/MakeBinCommand.php',
             'vendor/mongdch/gaia-framework/src/command/MakeCmdCommand.php',
             'vendor/mongdch/gaia-framework/src/command/MakeProcessCommand.php',
+            'vendor/mongdch/gaia-framework/src/command/MakeControllerCommand.php',
+            'vendor/mongdch/gaia-framework/src/command/MakeDaoCommand.php',
             'vendor/mongdch/gaia-framework/src/command/VendorPublishCommand.php',
-            'support/command/http/RouteCacheCommand.php',
-            'support/command/http/RouteClearCommand.php',
-            'support/command/crontab/DbInitCommand.php',
-            'support/command/queue/DbInitCommand.php'
+            'support/http/command/RouteCacheCommand.php',
+            'support/http/command/RouteClearCommand.php',
         ]);
         $exclude_filePaths = array_map(function ($dir) {
             // 将目录分割符号\,/统一修改为 DIRECTORY_SEPARATOR
