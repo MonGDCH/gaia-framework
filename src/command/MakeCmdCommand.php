@@ -76,14 +76,14 @@ class %s extends Command
      *
      * @var string
      */
-    protected static \$defaultDescription = 'The user command [%s]';
+    protected static \$defaultDescription = 'The custom app command [%s]';
 
     /**
      * 指令分组
      *
      * @var string
      */
-    protected static \$defaultGroup = 'user';
+    protected static \$defaultGroup = 'app';
 
     /**
      * 执行指令的接口方法
@@ -94,7 +94,7 @@ class %s extends Command
      */
     public function execute(Input \$input, Output \$output)
     {
-        \$output->write('%s', true, true);
+        \$output->write('%s');
     }
 }
 TPL;

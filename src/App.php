@@ -27,7 +27,7 @@ class App
      * 
      * @var string
      */
-    const VERSION = '1.2.5';
+    const VERSION = '1.2.6';
 
     /**
      * 应用名
@@ -53,6 +53,10 @@ class App
     {
         // 初始化配置
         static::initialize($app);
+        // 注册workerman配置
+        static::initWorker(Config::instance()->get('app.worker', []), $app);
+        // 应用初始化钩子
+        Event::instance()->trigger('app_init');
         // 获取控制台实例
         $console = static::console();
         // 优化指令查看面板
@@ -93,13 +97,9 @@ class App
         date_default_timezone_set(Config::instance()->get('app.timezone', 'PRC'));
         // 初始化日志服务
         Logger::instance()->registerChannel(Config::instance()->get('log', []));
-        // 注册workerman配置
-        static::initWorker(Config::instance()->get('app.worker', []), $app);
         // 预定义应用钩子
         Event::instance()->handler('handler');
         Event::instance()->register(Config::instance()->get('app.hooks', []));
-        // 应用初始化钩子
-        Event::instance()->trigger('app_init');
     }
 
     /**

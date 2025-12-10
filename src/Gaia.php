@@ -102,10 +102,6 @@ class Gaia
             if (!is_subclass_of($className, ProcessInterface::class)) {
                 continue;
             }
-            // 是否启用进程
-            // if (!$className::enable()) {
-            //     continue;
-            // }
             // 获取进程名
             $name = str_replace(DIRECTORY_SEPARATOR, '.', $iterator->getSubPath()) . '.' . $file->getBasename('.php');
             $name = strtolower(ltrim($name, '.'));
@@ -154,13 +150,13 @@ class Gaia
         $name = 'monitor';
         if (!OS::isWindows()) {
             // linux环境
-            if ($monitor && !defined('IN_PHAR')) {
+            if ($monitor) {
                 $this->bootstrap($name, Monitor::getProcessConfig(), Monitor::class);
             }
             Worker::runAll();
         } else {
             // windows环境
-            if ($monitor && !defined('IN_PHAR')) {
+            if ($monitor) {
                 $process_files[] = $this->createProcessFile($name, Monitor::class, $name, $dirName);
             }
             $this->runWin($process_files, $dirName);

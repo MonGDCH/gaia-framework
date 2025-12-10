@@ -13,30 +13,9 @@ namespace gaia\interfaces;
 interface PluginInterface
 {
     /**
-     * 是否启用插件
-     *
-     * @return boolean
-     */
-    public static function enable(): bool;
-
-    /**
-     * 注册插件
+     * 启动插件
      *
      * @return void
      */
-    public static function register();
-
-    /**
-     * 安装插件
-     *
-     * @return void
-     */
-    public static function install();
-
-    /**
-     * 卸载插件
-     *
-     * @return void
-     */
-    public static function uninstall();
+    public static function start();
 }
