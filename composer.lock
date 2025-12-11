@@ -8,11 +8,11 @@
     "packages": [
         {
             "name": "mongdch/mon-console",
-            "version": "1.1.5",
+            "version": "1.1.6",
             "dist": {
                 "type": "zip",
-                "url": "https://mirrors.tencent.com/repository/composer/mongdch/mon-console/1.1.5/mongdch-mon-console-1.1.5.zip",
-                "reference": "6be926af33c956556b321f489b5039866ea816aa",
+                "url": "https://mirrors.tencent.com/repository/composer/mongdch/mon-console/1.1.6/mongdch-mon-console-1.1.6.zip",
+                "reference": "5ae58ec768af68fcd8e3494d8fa6a6f4f26a203e",
                 "shasum": ""
             },
             "require": {
@@ -41,9 +41,9 @@
             ],
             "support": {
                 "issues": "https://github.com/MonGDCH/mon-console/issues",
-                "source": "https://github.com/MonGDCH/mon-console/tree/1.1.5"
+                "source": "https://github.com/MonGDCH/mon-console/tree/1.1.6"
             },
-            "time": "2025-12-08T06:38:40+00:00"
+            "time": "2025-12-11T03:26:43+00:00"
         },
         {
             "name": "mongdch/mon-env",

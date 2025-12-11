@@ -48,7 +48,7 @@ class MakeCmdCommand extends Command
 
 declare(strict_types=1);
 
-namespace support\command;
+namespace app\command;
 
 use mon\console\Input;
 use mon\console\Output;

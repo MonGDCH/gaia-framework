@@ -48,7 +48,7 @@ class MakeProcessCommand extends Command
 
 declare(strict_types=1);
 
-namespace support\process;
+namespace app\process;
 
 use gaia\Process;
 use Workerman\Worker;

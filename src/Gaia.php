@@ -159,7 +159,7 @@ class Gaia
             if ($monitor) {
                 $process_files[] = $this->createProcessFile($name, Monitor::class, $name, $dirName);
             }
-            $this->runWin($process_files, $dirName);
+            $this->runWin($process_files);
         }
     }
 
@@ -169,14 +169,8 @@ class Gaia
      * @param array $files
      * @return void
      */
-    public function runWin(array $files, string $dirName)
+    public function runWin(array $files)
     {
-        // 兼容处理windows下start服务重启问题
-        if (defined('COMPATIBLE_MOD') && COMPATIBLE_MOD) {
-            $startFile = $this->createWinStartFile($dirName);
-            array_unshift($files, $startFile);
-        }
-
         $resource = $this->open_process($files);
         // windows环境需要重新创建监听服务
         $monitor = new Monitor();
@@ -226,7 +220,6 @@ class Gaia
                         echo "process error: class {$handler} not exists\r\n";
                         return;
                     }
-
                     $instance = Container::instance()->make($handler, $config['constructor'] ?? []);
                     $this->bindWorker($worker, $instance);
                 }
@@ -275,7 +268,6 @@ class Gaia
         if (method_exists($handler, 'onWorkerStart') && is_callable([$handler, 'onWorkerStart'])) {
             $handler->onWorkerStart($worker);
         }
-
         // 进程关闭
         if (method_exists($handler, 'onWorkerStop') && is_callable([$handler, 'onWorkerStop'])) {
             $handler->onWorkerStop($worker);
@@ -344,43 +336,6 @@ EOF;
 
         $saveName = $saveName ?: $name;
         $savePath = '/gaia/windows' . ($dirName ? "/{$dirName}/" : '/') . 'start_' . $saveName . '.php';
-        $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . $savePath;
-        File::createFile($tmp, $fileName, false);
-        return $fileName;
-    }
-
-    /**
-     * 创建windows环境下启动文件
-     *
-     * @param string $dirName   二级目录名
-     * @return string
-     */
-    protected function createWinStartFile(string $dirName = ''): string
-    {
-        $app = App::name();
-        $autoloadFile = $dirName ? '/../../../../vendor/autoload.php' : '/../../../vendor/autoload.php';
-        $tmp = <<<EOF
-<?php
-
-require_once __DIR__ . '$autoloadFile';
-
-// 打开错误提示
-ini_set('display_errors', 'on');
-error_reporting(E_ALL);
-
-// 重置opcache
-if (is_callable('opcache_reset')) {
-    opcache_reset();
-}
-
-// Gaia初始化
-\gaia\App::initialize('$app');
-
-// 启动程序
-\Workerman\Worker::runAll();
-        
-EOF;
-        $savePath = '/gaia/windows' . ($dirName ? "/{$dirName}/" : '/') . 'start.php';
         $fileName = (defined('RUNTIME_PATH') ? RUNTIME_PATH : './runtime') . $savePath;
         File::createFile($tmp, $fileName, false);
         return $fileName;
