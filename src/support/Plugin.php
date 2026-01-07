@@ -108,11 +108,10 @@ class Plugin
                 echo "Create Dir $sontDir\r\n";
             } else {
                 $file = $dest . '/' . $iterator->getSubPathName();
-                if (file_exists($file) && !$overwrite) {
-                    continue;
+                $create = File::copyFile($item, $file, $overwrite);
+                if (!$create) {
+                    throw new \RuntimeException("Copy file {$item} to {$file} failed.");
                 }
-
-                copy($item, $file);
                 echo "Create File $file\r\n";
             }
         }
